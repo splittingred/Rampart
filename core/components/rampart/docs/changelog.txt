@@ -1,0 +1,5 @@
+Changelog for Rampart.
+
+Rampart 1.0.0
+==============
+- Initial release.

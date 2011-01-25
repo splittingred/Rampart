@@ -1,0 +1,5 @@
+config.core.php
+core.config.php
+_build/build.config.php
+.idea
+.nbproject
