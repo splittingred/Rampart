@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model package="rampart" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM">
+    <object class="rptBan" table="rampart_bans" extends="xPDOSimpleObject">
+        <field key="bangroup" dbtype="int" precision="255" attributes="unsigned" phptype="integer" null="false" default="0" index="index" />
+        <field key="ip_low1" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="ip_high1" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="ip_low2" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="ip_high2" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="ip_low3" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="ip_high3" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="ip_low4" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="ip_high4" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="hostname" dbtype="tinytext" phptype="string" null="true" />
+        <field key="email" dbtype="tinytext" phptype="string" null="true" />
+        <field key="username" dbtype="tinytext" phptype="string" null="true" />
+        <field key="matches" dbtype="int" precision="11" attributes="unsigned" phptype="integer" null="true" default="0" />
+
+        <index alias="bangroup" name="bangroup" primary="false" unique="false" type="BTREE">
+            <column key="bangroup" length="" collation="A" null="false" />
+        </index>
+
+        <aggregate alias="BanGroup" class="rptBanGroup" local="bangroup" foreign="id" cardinality="one" owner="foreign" />
+    </object>
+    
+    <object class="rptBanGroup" table="rampart_ban_groups" extends="xPDOSimpleObject">
+        <field key="name" dbtype="varchar" precision="255" phptype="string" null="false" default="" index="index" />
+        <field key="description" dbtype="text" phptype="string" null="true" />
+        <field key="createdon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="expireson" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="notes" dbtype="text" phptype="string" null="true" />
+
+        <index alias="name" name="name" primary="false" unique="false" type="BTREE">
+            <column key="name" length="" collation="A" null="false" />
+        </index>
+
+        <composite alias="Bans" class="rptBan" local="id" foreign="bangroup" cardinality="many" owner="local" />
+    </object>
+</model>

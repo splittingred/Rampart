@@ -46,6 +46,7 @@ class Rampart {
             'chunkSuffix' => '.chunk.tpl',
             'snippetsPath' => $corePath.'elements/snippets/',
             'processorsPath' => $corePath.'processors/',
+            'controllersPath' => $corePath.'controllers/',
         ),$config);
 
         $this->modx->addPackage('rampart',$this->config['modelPath']);
@@ -64,7 +65,7 @@ class Rampart {
                 if (!$this->modx->loadClass('rampart.request.rampartControllerRequest',$this->config['modelPath'],true,true)) {
                     return 'Could not load controller request handler.';
                 }
-                $this->request = new modExtraControllerRequest($this);
+                $this->request = new RampartControllerRequest($this);
                 return $this->request->handleRequest();
             break;
             default:
