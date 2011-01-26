@@ -10,10 +10,7 @@ $isBanned = false;
 $isRestricted = false;
 
 $username = $fields[$usernameField];
-//var_dump($fields);
-
 $email = $fields['email'];
-
 $ip = $_SERVER['REMOTE_ADDR'];
 if ($ip == '::1') $ip = '72.177.93.127';
 $boomIp = explode('.',$ip);
@@ -46,8 +43,6 @@ if (count($bans)) {
     $isBanned = true;
 }
 
-//var_dump($hostname);
-
 /* demo spammer data */
 //$ip = '109.230.213.121';
 //$username = 'RyanHG';
@@ -59,12 +54,12 @@ if ($modx->loadClass('stopforumspam.StopForumSpam',$rampart->config['modelPath']
     $spamResult = $sfspam->check($ip,$email,$username);
     if (!empty($spamResult)) {
         if (in_array('Ip',$spamResult) && in_array('Username',$spamResult)) {
-            $isRestricted = true;
+            $isRestricted = 'ipusername';
         } else if (in_array('Email',$spamResult)) {
-            $isRestricted = true;
+            $isRestricted = 'email';
         } else if (in_array('Ip',$spamResult)) {
-            /* here we would add a "threshold" of sorts, if an IP positive happens
-             * a lot, we would add to the ban list
+            /* TODO: here we would add a "threshold" of sorts, if an IP positive
+             * happens a lot, we would add to the ban/flagged list
              */
         }
     }
@@ -72,18 +67,29 @@ if ($modx->loadClass('stopforumspam.StopForumSpam',$rampart->config['modelPath']
     $modx->log(modX::LOG_LEVEL_ERROR,'[Rampart] Couldnt load StopForumSpam class.');
 }
 
+$hook->setValue('ip',$ip);
+$hook->setValue('hostname',$hostname);
+$hook->setValue('userAgent',$_SERVER['HTTP_USER_AGENT']);
+
 if ($isBanned) {
-    die('SPAM');
     $hook->addError('username','SPAMMER! Please go away.');
     return false;
 }
-if ($isRestricted) {
-    die('RESTRICTED');
-    /* need to implement this in Register to prevent conf email from being sent */
+if (!empty($isRestricted)) {
+    /* prevents confirmation email from being sent */
     $hook->setValue('register.moderate',true);
+
+    /* create a flagged user record */
+    $flu = $modx->newObject('rptFlaggedUser');
+    $flu->set('username',$username);
+    $flu->set('flaggedon',time());
+    $flu->set('flaggedfor',$isRestricted);
+    $flu->set('ip',$ip);
+    $flu->set('hostname',$hostname);
+    $flu->set('useragent',$_SERVER['HTTP_USER_AGENT']);
+    $flu->save();
     return true;
 }
 
-//echo count($bans).'<br />';
 die('NO BAN! RAMPART!!');
 return true;

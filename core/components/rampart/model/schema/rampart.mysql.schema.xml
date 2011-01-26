@@ -35,4 +35,19 @@
 
         <composite alias="Bans" class="rptBan" local="id" foreign="bangroup" cardinality="many" owner="local" />
     </object>
+
+    <object class="rptFlaggedUser" table="rampart_flagged_users" extends="xPDOSimpleObject">
+        <field key="username" dbtype="varchar" precision="255" phptype="string" null="false" default="" index="index" />
+        <field key="flaggedon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="flaggedfor" dbtype="varchar" precision="255" phptype="string" null="false" default="" />
+        <field key="ip" dbtype="varchar" precision="60" phptype="string" null="true" />
+        <field key="hostname" dbtype="tinytext" phptype="string" null="true" />
+        <field key="useragent" dbtype="tinytext" phptype="string" null="true" />
+
+        <index alias="username" name="username" primary="false" unique="false" type="BTREE">
+            <column key="username" length="" collation="A" null="false" />
+        </index>
+
+        <aggregate alias="User" class="modUser" local="username" foreign="username" cardinality="one" owner="foreign" />
+    </object>
 </model>
