@@ -20,7 +20,23 @@
  * @package rampart
  */
 /**
+ * Rampart Connector
+ *
  * @package rampart
  */
-require_once (strtr(realpath(dirname(dirname(__FILE__))), '\\', '/') . '/rptban.class.php');
-class rptBan_mysql extends rptBan {}
+require_once dirname(dirname(dirname(dirname(__FILE__)))).'/config.core.php';
+require_once MODX_CORE_PATH.'config/'.MODX_CONFIG_KEY.'.inc.php';
+require_once MODX_CONNECTORS_PATH.'index.php';
+
+$rampartCorePath = $modx->getOption('rampart.core_path',null,$modx->getOption('core_path').'components/rampart/');
+require_once $rampartCorePath.'model/rampart/rampart.class.php';
+$modx->rampart = new Rampart($modx);
+
+$modx->lexicon->load('rampart:default');
+
+/* handle request */
+$path = $modx->getOption('processorsPath',$modx->quip->config,$rampartCorePath.'processors/');
+$modx->request->handleRequest(array(
+    'processors_path' => $path,
+    'location' => '',
+));

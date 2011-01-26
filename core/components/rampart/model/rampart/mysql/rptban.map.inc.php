@@ -1,5 +1,25 @@
 <?php
 /**
+ * Rampart
+ *
+ * Copyright 2011 by Shaun McCormick <shaun@modx.com>
+ *
+ * Rampart is free software; you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * Rampart is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * Rampart; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * @package rampart
+ */
+/**
  * @package rampart
  */
 $xpdo_meta_map['rptBan']= array (
@@ -7,7 +27,7 @@ $xpdo_meta_map['rptBan']= array (
   'table' => 'rampart_bans',
   'fields' => 
   array (
-    'bangroup' => 0,
+    'reason' => NULL,
     'ip_low1' => 0,
     'ip_high1' => 0,
     'ip_low2' => 0,
@@ -20,18 +40,20 @@ $xpdo_meta_map['rptBan']= array (
     'email' => NULL,
     'username' => NULL,
     'matches' => 0,
+    'createdon' => NULL,
+    'editedon' => NULL,
+    'editedby' => 0,
+    'expireson' => NULL,
+    'notes' => NULL,
+    'active' => 0,
   ),
   'fieldMeta' => 
   array (
-    'bangroup' => 
+    'reason' => 
     array (
-      'dbtype' => 'int',
-      'precision' => '255',
-      'attributes' => 'unsigned',
-      'phptype' => 'integer',
-      'null' => false,
-      'default' => 0,
-      'index' => 'index',
+      'dbtype' => 'tinytext',
+      'phptype' => 'string',
+      'null' => true,
     ),
     'ip_low1' => 
     array (
@@ -129,16 +151,61 @@ $xpdo_meta_map['rptBan']= array (
       'precision' => '11',
       'attributes' => 'unsigned',
       'phptype' => 'integer',
-      'null' => true,
+      'null' => false,
       'default' => 0,
+    ),
+    'createdon' => 
+    array (
+      'dbtype' => 'datetime',
+      'phptype' => 'datetime',
+      'null' => true,
+    ),
+    'editedon' => 
+    array (
+      'dbtype' => 'datetime',
+      'phptype' => 'datetime',
+      'null' => true,
+    ),
+    'editedby' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => false,
+      'default' => 0,
+      'index' => 'index',
+    ),
+    'expireson' => 
+    array (
+      'dbtype' => 'datetime',
+      'phptype' => 'datetime',
+      'null' => true,
+      'index' => 'index',
+    ),
+    'notes' => 
+    array (
+      'dbtype' => 'text',
+      'phptype' => 'string',
+      'null' => true,
+    ),
+    'active' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '1',
+      'attributes' => 'unsigned',
+      'phptype' => 'boolean',
+      'null' => false,
+      'default' => 0,
+      'index' => 'index',
     ),
   ),
   'aggregates' => 
   array (
-    'BanGroup' => 
+    'EditedBy' => 
     array (
-      'class' => 'rptBanGroup',
-      'local' => 'bangroup',
+      'class' => 'modUser',
+      'local' => 'editedby',
       'foreign' => 'id',
       'cardinality' => 'one',
       'owner' => 'foreign',

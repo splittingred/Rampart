@@ -20,7 +20,33 @@
  * @package rampart
  */
 /**
+ * Adds modActions and modMenus into package
+ *
  * @package rampart
+ * @subpackage build
  */
-require_once (strtr(realpath(dirname(dirname(__FILE__))), '\\', '/') . '/rptban.class.php');
-class rptBan_mysql extends rptBan {}
+$action= $modx->newObject('modAction');
+$action->fromArray(array(
+    'id' => 1,
+    'namespace' => 'rampart',
+    'parent' => 0,
+    'controller' => 'index',
+    'haslayout' => 1,
+    'lang_topics' => 'rampart:default',
+    'assets' => '',
+),'',true,true);
+
+/* load menu into action */
+$menu= $modx->newObject('modMenu');
+$menu->fromArray(array(
+    'text' => 'rampart',
+    'parent' => 'components',
+    'description' => 'rampart.menu_desc',
+    'icon' => 'images/icons/plugin.gif',
+    'menuindex' => 0,
+    'params' => '',
+    'handler' => '',
+),'',true,true);
+$menu->addOne($action);
+
+return $menu;

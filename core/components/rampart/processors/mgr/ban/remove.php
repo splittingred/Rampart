@@ -2,7 +2,7 @@
 /**
  * Rampart
  *
- * Copyright 2010-2011 by Shaun McCormick <shaun@modx.com>
+ * Copyright 2011 by Shaun McCormick <shaun@modx.com>
  *
  * Rampart is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -21,5 +21,16 @@
  */
 /**
  * @package rampart
+ * @subpackage processors
  */
-class rptBanGroup extends xPDOSimpleObject {}
+if (empty($scriptProperties['id'])) {
+    return $modx->error->failure($modx->lexicon('rampart.ban_err_ns'));
+}
+$ban = $modx->getObject('rptBan',$scriptProperties['id']);
+if (empty($ban)) { return $modx->error->failure($modx->lexicon('rampart.ban_err_nf')); }
+
+if ($ban->remove() === false) {
+    return $modx->error->failure($modx->lexicon('rampart.ban_err_remove'));
+}
+
+return $modx->error->success('',$ban);

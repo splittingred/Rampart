@@ -21,6 +21,23 @@
  */
 /**
  * @package rampart
+ * @subpackage processors
  */
-require_once (strtr(realpath(dirname(dirname(__FILE__))), '\\', '/') . '/rptban.class.php');
-class rptBan_mysql extends rptBan {}
+if (empty($scriptProperties['id'])) {
+    return $modx->error->failure($modx->lexicon('rampart.ban_err_ns'));
+}
+$ban = $modx->getObject('rptBan',$scriptProperties['id']);
+if (empty($ban)) { return $modx->error->failure($modx->lexicon('rampart.ban_err_nf')); }
+
+$newBan = $modx->newObject('rptBan');
+$newBan->fromArray($ban->toArray());
+$newBan->set('editedon',null);
+$newBan->set('editedby',0);
+$newBan->set('createdon',time());
+$newBan->set('active',0);
+
+if ($newBan->save() === false) {
+    return $modx->error->failure($modx->lexicon('rampart.ban_err_duplicate'));
+}
+
+return $modx->error->success('',$newBan);

@@ -25,6 +25,17 @@
  * @package rampart
  */
 class Rampart {
+    const REASON = 'reason';
+    const STATUS = 'status';
+    const IP = 'ip';
+    const HOSTNAME = 'hostname';
+    const EMAIL = 'email';
+    const USERNAME = 'username';
+    const USER_AGENT = 'user_agent';
+    const STATUS_OK = 'ok';
+    const STATUS_BANNED = 'banned';
+    const STATUS_MODERATED = 'moderated';
+
     function __construct(modX &$modx,array $config = array()) {
         $this->modx =& $modx;
 
@@ -47,6 +58,8 @@ class Rampart {
             'snippetsPath' => $corePath.'elements/snippets/',
             'processorsPath' => $corePath.'processors/',
             'controllersPath' => $corePath.'controllers/',
+
+            'salt' => $this->modx->getOption('rampart.salt',$config,'sieg3thec4stle'),
         ),$config);
 
         $this->modx->addPackage('rampart',$this->config['modelPath']);
@@ -119,4 +132,171 @@ class Rampart {
         }
         return $chunk;
     }
+
+    /**
+     * Run the spam checks
+     */
+    public function check($username = '',$email = '') {
+        $status = Rampart::STATUS_OK;
+
+        $ip = $_SERVER['REMOTE_ADDR'];
+        if ($ip == '::1') $ip = '72.177.93.127';
+        $hostname = gethostbyaddr($ip);
+        $boomIp = explode('.',$ip);
+        
+        /* build spam checking query */
+        $c = $this->modx->newQuery('rptBan');
+        if (!empty($username)) {
+            $c->orCondition(array(
+                '"'.$username.'" LIKE username',
+            ),null,2);
+        }
+        if (!empty($email)) {
+            $c->orCondition(array(
+                '"'.$email.'" LIKE email',
+            ),null,2);
+        }
+        $c->orCondition(array(
+            '"'.$hostname.'" LIKE hostname',
+        ),null,2);
+        $c->orCondition(array(
+            '(('.$boomIp[0].' BETWEEN ip_low1 AND ip_high1)
+            AND ('.$boomIp[1].' BETWEEN ip_low2 AND ip_high2)
+            AND ('.$boomIp[2].' BETWEEN ip_low3 AND ip_high3)
+            AND ('.$boomIp[3].' BETWEEN ip_low4 AND ip_high4))'
+        ),null,2);
+        $c->where(array(
+            'active' => true,
+        ));
+        $c->andCondition(array(
+            'expireson:>' => time(),
+            'OR:expireson:IS' => null,
+            'OR:expireson:=' => '',
+        ),null,3);
+
+        $bans = $this->modx->getCollection('rptBan',$c);
+        if (count($bans)) {
+            foreach ($bans as $ban) {
+                $ban->set('matches',$ban->get('matches')+1);
+                $ban->save();
+            }
+            $status = Rampart::STATUS_BANNED;
+        }
+
+        /* demo spammer data */
+        //$ip = '109.230.213.121';
+        //$username = 'RyanHG';
+        //$email = 'yumunter@fmailer.net';
+
+        /* Run StopForumSpam checks */
+        if ($this->modx->loadClass('stopforumspam.StopForumSpam',$this->config['modelPath'],true,true)) {
+            $sfspam = new StopForumSpam($this->modx);
+            $spamResult = $sfspam->check($ip,$email,$username);
+            if (!empty($spamResult)) {
+                if (in_array('Ip',$spamResult) && in_array('Username',$spamResult)) {
+                    $status = Rampart::STATUS_MODERATED;
+                    $reason = 'ipusername';
+                } else if (in_array('Email',$spamResult)) {
+                    $status = Rampart::STATUS_MODERATED;
+                    $reason = 'email';
+                } else if (in_array('Ip',$spamResult)) {
+                    /* TODO: here we would add a "threshold" of sorts, if an IP positive
+                     * happens a lot, we would add to the ban/flagged list
+                     */
+                }
+            }
+        } else {
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'[Rampart] Couldnt load StopForumSpam class.');
+        }
+
+        return array(
+            Rampart::STATUS => $status,
+            Rampart::REASON => $reason,
+            Rampart::IP => $ip,
+            Rampart::HOSTNAME => $hostname,
+            Rampart::EMAIL => $email,
+            Rampart::USERNAME => $username,
+            Rampart::USER_AGENT => $_SERVER['HTTP_USER_AGENT'],
+        );
+    }
+
+    /**
+     * Generate a random key password
+     */
+    public function generatePassword($length=8) {
+        $pword = '';
+        $charmap = '0123456789bcdfghjkmnpqrstvwxyz';
+        $i = 0;
+        while ($i < $length) {
+            $char = substr($charmap, rand(0, strlen($charmap)-1), 1);
+            if (!strstr($pword, $char)) {
+                $pword .= $char;
+                $i++;
+            }
+        }
+        return $pword;
+    }
+
+
+
+    /**
+     * Encrypts a string with a md5/mcrypt salted hash
+     *
+     * @access private
+     * @param string $str The string to encrypt
+     * @return An encrypted, salted hash
+     */
+    public function encrypt($str) {
+        $key = $this->config['salt'];
+
+        srand((double)microtime() * 1000000); /* for MCRYPT_RAND */
+        $key = md5($key); /* to improve variance */
+
+        /* open module, create IV */
+        $td = mcrypt_module_open('des','','cfb','');
+        $key = substr($key,0,mcrypt_enc_get_key_size($td));
+        $iv_size = mcrypt_enc_get_iv_size($td);
+        $iv = mcrypt_create_iv($iv_size,MCRYPT_RAND);
+
+        /* initialize encryption handle */
+        if (mcrypt_generic_init($td,$key,$iv) != -1) {
+            /* Encrypt data */
+            $c_t = mcrypt_generic($td,$str);
+            mcrypt_generic_deinit($td);
+            mcrypt_module_close($td);
+            $c_t = $iv.$c_t;
+            return urlencode($c_t);
+        }
+    }
+
+    /**
+     * Decrypts a string based upon the set hash
+     *
+     * @access private
+     * @param string $str The string to decrypt
+     * @return A decrypted string
+     */
+    public function decrypt($str) {
+        $str = urldecode($str);
+        $key = $this->config['salt'];
+
+        $key = md5($key);
+
+        /* open module, create IV */
+        $td = mcrypt_module_open('des','','cfb','');
+        $key = substr($key,0,mcrypt_enc_get_key_size($td));
+        $iv_size = mcrypt_enc_get_iv_size($td);
+        $iv = substr($str,0,$iv_size);
+        $str = substr($str,$iv_size);
+
+        /* initialize encryption handle */
+        if (mcrypt_generic_init($td,$key,$iv) != -1) {
+            /* decrypt data */
+            $c_t = mdecrypt_generic($td,$str);
+            mcrypt_generic_deinit($td);
+            mcrypt_module_close($td);
+            return $c_t;
+        }
+    }
+
 }

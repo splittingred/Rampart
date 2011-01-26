@@ -21,6 +21,25 @@
  */
 /**
  * @package rampart
+ * @subpackage build
  */
-require_once (strtr(realpath(dirname(dirname(__FILE__))), '\\', '/') . '/rptban.class.php');
-class rptBan_mysql extends rptBan {}
+function getSnippetContent($filename) {
+    $o = file_get_contents($filename);
+    $o = str_replace('<?php','',$o);
+    $o = str_replace('?>','',$o);
+    $o = trim($o);
+    return $o;
+}
+$snippets = array();
+
+$snippets[0]= $modx->newObject('modSnippet');
+$snippets[0]->fromArray(array(
+    'id' => 0,
+    'name' => 'preHook.RampartRegister',
+    'description' => 'FormIt preHook for Rampart Integration into Register.',
+    'snippet' => getSnippetContent($sources['source_core'].'/elements/snippets/prehook.rampartregister.php'),
+    'properties' => '',
+),'',true,true);
+unset($properties);
+
+return $snippets;

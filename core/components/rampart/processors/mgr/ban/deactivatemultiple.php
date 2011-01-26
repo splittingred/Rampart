@@ -20,7 +20,26 @@
  * @package rampart
  */
 /**
+ * Deactivate multiple Bans
+ *
  * @package rampart
+ * @subpackage processors
  */
-require_once (strtr(realpath(dirname(dirname(__FILE__))), '\\', '/') . '/rptban.class.php');
-class rptBan_mysql extends rptBan {}
+if (empty($scriptProperties['bans'])) {
+    return $modx->error->failure($modx->lexicon('rampart.ban_err_ns'));
+}
+
+$banIds = explode(',',$scriptProperties['bans']);
+
+foreach ($banIds as $banId) {
+    $ban = $modx->getObject('rptBan',$banId);
+    if ($ban == null) continue;
+
+    $ban->set('active',false);
+
+    if ($ban->save() === false) {
+        return $modx->error->failure($modx->lexicon('rampart.ban_err_save'));
+    }
+}
+
+return $modx->error->success();

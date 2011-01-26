@@ -22,4 +22,51 @@
 /**
  * @package rampart
  */
-class rptBan extends xPDOSimpleObject {}
+class rptBan extends xPDOSimpleObject {
+    public function set($k, $v= null, $vType= '') {
+        switch ($k) {
+            case 'ip':
+                $ipex = explode('.',$v);
+                for ($i=0;$i<4;$i++) {
+                    $n = $i+1;
+                    if (!isset($ipex[$i])) {
+                        $this->set('ip_low'.$n,0);
+                        $this->set('ip_high'.$n,0);
+                    } else if (strpos($ipex[$i],'-') !== false) {
+                        $ipr = explode('-',$ipex[$i]);
+                        $this->set('ip_low'.$n,$ipr[0]);
+                        $this->set('ip_high'.$n,$ipr[1]);
+                    } else if ($ipex[$i] == '*') {
+                        $this->set('ip_low'.$n,0);
+                        $this->set('ip_high'.$n,255);
+                    } else {
+                        $this->set('ip_low'.$n,$ipex[$i]);
+                        $this->set('ip_high'.$n,$ipex[$i]);
+                    }
+                }
+                break;
+        }
+        return parent :: set($k,$v,$vType);
+    }
+
+    public function get($k, $format = null, $formatTemplate= null) {
+        switch ($k) {
+            case 'ip':
+                $ip = '';
+                $i = 1;
+                for ($i=1;$i<5;$i++) {
+                    $ip .= '.';
+                    $block = $this->get('ip_low'.$i) == $this->get('ip_high'.$i) ? $this->get('ip_low'.$i) : $this->get('ip_low'.$i).'-'.$this->get('ip_high'.$i);
+                    if ($block == '0-255' && !empty($block)) $block = '*';
+                    $ip .= $block;
+                }
+                $v = trim($ip,'.');
+                if ($v == '0.0.0.0') $v = '';
+                break;
+            default:
+                $v = parent::get($k,$format,$formatTemplate);
+                break;
+        }
+        return $v;
+    }
+}

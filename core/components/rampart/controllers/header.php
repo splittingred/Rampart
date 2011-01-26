@@ -3,7 +3,7 @@
  * @package rampart
  * @subpackage controllers
  */
-$modx->regClientStartupScript($showcase->config['jsUrl'].'rampart.js');
+$modx->regClientStartupScript($rampart->config['jsUrl'].'rampart.js');
 $modx->regClientStartupHTMLBlock('<script type="text/javascript">
 Ext.onReady(function() {
     Rampart.config = '.$modx->toJSON($rampart->config).';

@@ -1,5 +1,25 @@
 <?php
 /**
+ * Rampart
+ *
+ * Copyright 2011 by Shaun McCormick <shaun@modx.com>
+ *
+ * Rampart is free software; you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * Rampart is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * Rampart; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * @package rampart
+ */
+/**
  * preHook for Register snippet that utilizes Rampart
  * 
  * @package rampart
@@ -11,85 +31,42 @@ $isRestricted = false;
 
 $username = $fields[$usernameField];
 $email = $fields['email'];
-$ip = $_SERVER['REMOTE_ADDR'];
-if ($ip == '::1') $ip = '72.177.93.127';
-$boomIp = explode('.',$ip);
-$hostname = gethostbyaddr($ip);
 
-/* build spam checking query */
-$c = $modx->newQuery('rptBan');
-$c->where(array(
-    '"'.$username.'" LIKE username',
-));
-$c->orCondition(array(
-    '"'.$email.'" LIKE email',
-));
-$c->orCondition(array(
-    '"'.$hostname.'" LIKE hostname',
-));
-$c->orCondition(array(
-    '(('.$boomIp[0].' BETWEEN ip_low1 AND ip_high1)
-	AND ('.$boomIp[1].' BETWEEN ip_low2 AND ip_high2)
-	AND ('.$boomIp[2].' BETWEEN ip_low3 AND ip_high3)
-	AND ('.$boomIp[3].' BETWEEN ip_low4 AND ip_high4))'
-));
+$activationEmailTpl = $modx->getOption('activationEmailTpl',$scriptProperties,'');
+$activationEmailSubject = $modx->getOption('activationEmailSubject',$scriptProperties,'');
+$activationResourceId = $modx->getOption('activationResourceId',$scriptProperties,'');
+$rptSpammerErrorMessage = $modx->getOption('rptSpammerErrorMessage',$scriptProperties,'Your account has been banned as a spammer. Sorry.');
 
-$bans = $modx->getCollection('rptBan',$c);
-if (count($bans)) {
-    foreach ($bans as $ban) {
-        $ban->set('matches',$ban->get('matches')+1);
-        $ban->save();
-    }
-    $isBanned = true;
-}
+$response = $rampart->check($username,$email);
 
-/* demo spammer data */
-//$ip = '109.230.213.121';
-//$username = 'RyanHG';
-//$email = 'yumunter@fmailer.net';
+$hook->setValue('ip',$response[Rampart::IP]);
+$hook->setValue('hostname',$response[Rampart::HOSTNAME]);
+$hook->setValue('userAgent',$response[Rampart::USER_AGENT]);
 
-/* Run StopForumSpam checks */
-if ($modx->loadClass('stopforumspam.StopForumSpam',$rampart->config['modelPath'],true,true)) {
-    $sfspam = new StopForumSpam($modx);
-    $spamResult = $sfspam->check($ip,$email,$username);
-    if (!empty($spamResult)) {
-        if (in_array('Ip',$spamResult) && in_array('Username',$spamResult)) {
-            $isRestricted = 'ipusername';
-        } else if (in_array('Email',$spamResult)) {
-            $isRestricted = 'email';
-        } else if (in_array('Ip',$spamResult)) {
-            /* TODO: here we would add a "threshold" of sorts, if an IP positive
-             * happens a lot, we would add to the ban/flagged list
-             */
-        }
-    }
-} else {
-    $modx->log(modX::LOG_LEVEL_ERROR,'[Rampart] Couldnt load StopForumSpam class.');
-}
-
-$hook->setValue('ip',$ip);
-$hook->setValue('hostname',$hostname);
-$hook->setValue('userAgent',$_SERVER['HTTP_USER_AGENT']);
-
-if ($isBanned) {
-    $hook->addError('username','SPAMMER! Please go away.');
+if ($response[Rampart::STATUS] == Rampart::STATUS_BANNED) {
+    $hook->addError('username',$rptSpammerErrorMessage);
     return false;
 }
-if (!empty($isRestricted)) {
+if ($response[Rampart::STATUS] == Rampart::STATUS_MODERATED) {
     /* prevents confirmation email from being sent */
     $hook->setValue('register.moderate',true);
 
+    $password = $rampart->encrypt($fields['password']);
+
     /* create a flagged user record */
     $flu = $modx->newObject('rptFlaggedUser');
-    $flu->set('username',$username);
+    $flu->set('username',$response[Rampart::USERNAME]);
+    $flu->set('password',$password);
+    $flu->set('ip',$response[Rampart::IP]);
+    $flu->set('hostname',$response[Rampart::HOSTNAME]);
+    $flu->set('useragent',$response[Rampart::USER_AGENT]);
+    $flu->set('flaggedfor',$response[Rampart::REASON]);
+    $flu->set('activation_email_tpl',$activationEmailTpl);
+    $flu->set('activation_email_subject',$activationEmailSubject);
+    $flu->set('activation_resource_id',$activationResourceId);
     $flu->set('flaggedon',time());
-    $flu->set('flaggedfor',$isRestricted);
-    $flu->set('ip',$ip);
-    $flu->set('hostname',$hostname);
-    $flu->set('useragent',$_SERVER['HTTP_USER_AGENT']);
     $flu->save();
     return true;
 }
 
-die('NO BAN! RAMPART!!');
 return true;

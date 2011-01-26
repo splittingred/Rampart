@@ -20,7 +20,27 @@
  * @package rampart
  */
 /**
+ * Reject multiple flagged users
+ *
  * @package rampart
+ * @subpackage processors
  */
-require_once (strtr(realpath(dirname(dirname(__FILE__))), '\\', '/') . '/rptban.class.php');
-class rptBan_mysql extends rptBan {}
+if (empty($scriptProperties['users'])) {
+    return $modx->error->failure($modx->lexicon('rampart.flagged_err_ns'));
+}
+
+$userIds = explode(',',$scriptProperties['users']);
+
+foreach ($userIds as $userId) {
+    $user = $modx->getObject('modUser',$userId);
+    if (empty($user)) continue;
+    $flaggedUser = $modx->getObject('rptFlaggedUser',array('username' => $user->get('username')));
+    if (empty($flaggedUser)) continue;
+
+    $flaggedUser->set('status','rejected');
+    $flaggedUser->set('actedon',time());
+    $flaggedUser->set('actedby',$modx->user->get('id'));
+    $flaggedUser->save();
+}
+
+return $modx->error->success();
