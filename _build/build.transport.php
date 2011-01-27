@@ -91,10 +91,13 @@ $attributes= array(
     xPDOTransport::PRESERVE_KEYS => true,
     xPDOTransport::UPDATE_OBJECT => false,
 );
-foreach ($settings as $setting) {
-    $vehicle = $builder->createVehicle($setting,$attributes);
-    $builder->putVehicle($vehicle);
-}
+if (is_array($settings)) {
+    foreach ($settings as $setting) {
+        $vehicle = $builder->createVehicle($setting,$attributes);
+        $builder->putVehicle($vehicle);
+    }
+    $modx->log(xPDO::LOG_LEVEL_INFO,'Packaged in '.count($settings).' System Settings.');
+} else { $modx->log(xPDO::LOG_LEVEL_ERROR,'Adding System Settings failed.'); }
 
 /* create category */
 $category= $modx->newObject('modCategory');
@@ -105,7 +108,7 @@ $category->set('category',PKG_NAME);
 $snippets = include_once $sources['data'].'transport.snippets.php';
 if (is_array($snippets)) {
     $category->addMany($snippets);
-    $modx->log(xPDO::LOG_LEVEL_INFO,'Packaged in '.count($snippets).' snippets.');
+    $modx->log(xPDO::LOG_LEVEL_INFO,'Packaged in '.count($snippets).' Snippets.');
 } else { $modx->log(xPDO::LOG_LEVEL_ERROR,'Adding snippets failed.'); }
 
 /* create category vehicle */
@@ -135,7 +138,6 @@ $vehicle->resolve('php',array(
     'source' => $sources['resolvers'] . 'resolve.tables.php',
 ));
 $builder->putVehicle($vehicle);
-
 
 $builder->setPackageAttributes(array(
     'license' => file_get_contents($sources['docs'] . 'license.txt'),
