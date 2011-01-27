@@ -20,33 +20,16 @@
  * @package rampart
  */
 /**
- * Adds modActions and modMenus into package
- *
  * @package rampart
- * @subpackage build
+ * @subpackage processors
  */
-$action= $modx->newObject('modAction');
-$action->fromArray(array(
-    'id' => 1,
-    'namespace' => 'rampart',
-    'parent' => 0,
-    'controller' => 'controllers/index',
-    'haslayout' => 1,
-    'lang_topics' => 'rampart:default',
-    'assets' => '',
-),'',true,true);
+$ban = $modx->newObject('rptBan');
+$ban->fromArray($scriptProperties);
+$ban->set('createdon',strftime('%Y-%m-%d %H:%M:%S'));
+$ban->set('createdby',$modx->user->get('id'));
 
-/* load menu into action */
-$menu= $modx->newObject('modMenu');
-$menu->fromArray(array(
-    'text' => 'rampart',
-    'parent' => 'components',
-    'description' => 'rampart.menu_desc',
-    'icon' => 'images/icons/plugin.gif',
-    'menuindex' => 0,
-    'params' => '',
-    'handler' => '',
-),'',true,true);
-$menu->addOne($action);
+if ($ban->save() === false) {
+    return $modx->error->failure($modx->lexicon('rampart.ban_err_save'));
+}
 
-return $menu;
+return $modx->error->success('',$ban);

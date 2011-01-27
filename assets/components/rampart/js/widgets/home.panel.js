@@ -40,6 +40,17 @@ Rampart.panel.Home = function(config) {
                     xtype: 'rpt-grid-moderated-users'
                     ,preventRender: true
                 }]
+            },{
+                title: _('rampart.ban_matches')
+                ,defaults: { autoHeight: true }
+                ,items: [{
+                    html: '<p>'+_('rampart.ban_matches.intro_msg')+'</p>'
+                    ,border: false
+                    ,bodyStyle: 'padding: 10px'
+                },{
+                    xtype: 'rpt-grid-ban-matches'
+                    ,preventRender: true
+                }]
             }]
         }]
     });
@@ -138,7 +149,7 @@ Rampart.grid.Bans = function(config) {
         },'->',{
             xtype: 'textfield'
             ,name: 'search'
-            ,id: 'rpt-tf-search'
+            ,id: 'rpt-bans-tf-search'
             ,emptyText: _('search')+'...'
             ,listeners: {
                 'change': {fn: this.search, scope: this}
@@ -155,7 +166,7 @@ Rampart.grid.Bans = function(config) {
             }
         },{
             xtype: 'button'
-            ,id: 'rpt-filter-clear'
+            ,id: 'rpt-bans-filter-clear'
             ,text: _('filter_clear')
             ,listeners: {
                 'click': {fn: this.clearFilter, scope: this}
@@ -173,7 +184,7 @@ Ext.extend(Rampart.grid.Bans,MODx.grid.Grid,{
     ,clearFilter: function() {
     	var s = this.getStore();
         s.baseParams.search = '';
-        Ext.getCmp('rpt-tf-search').reset();
+        Ext.getCmp('rpt-bans-tf-search').reset();
     	this.getBottomToolbar().changePage(1);
         this.refresh();
     }
@@ -244,7 +255,7 @@ Ext.extend(Rampart.grid.Bans,MODx.grid.Grid,{
             ,url: this.config.url
             ,params: {
                 action: 'mgr/ban/remove'
-                ,ban: this.menu.record.id
+                ,id: this.menu.record.id
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}

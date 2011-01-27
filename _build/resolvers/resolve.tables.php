@@ -20,33 +20,25 @@
  * @package rampart
  */
 /**
- * Adds modActions and modMenus into package
+ * Resolves db table creation
  *
  * @package rampart
  * @subpackage build
  */
-$action= $modx->newObject('modAction');
-$action->fromArray(array(
-    'id' => 1,
-    'namespace' => 'rampart',
-    'parent' => 0,
-    'controller' => 'controllers/index',
-    'haslayout' => 1,
-    'lang_topics' => 'rampart:default',
-    'assets' => '',
-),'',true,true);
+if ($object->xpdo) {
+    switch ($options[xPDOTransport::PACKAGE_ACTION]) {
+        case xPDOTransport::ACTION_INSTALL:
+        case xPDOTransport::ACTION_UPGRADE:
+            $modx =& $object->xpdo;
+            $modelPath = $modx->getOption('rampart.core_path',null,$modx->getOption('core_path').'components/rampart/').'model/';
+            $modx->addPackage('rampart',$modelPath);
 
-/* load menu into action */
-$menu= $modx->newObject('modMenu');
-$menu->fromArray(array(
-    'text' => 'rampart',
-    'parent' => 'components',
-    'description' => 'rampart.menu_desc',
-    'icon' => 'images/icons/plugin.gif',
-    'menuindex' => 0,
-    'params' => '',
-    'handler' => '',
-),'',true,true);
-$menu->addOne($action);
-
-return $menu;
+            $m = $modx->getManager();
+            $m->createObjectContainer('rptBan');
+            $m->createObjectContainer('rptFlaggedUser');
+            $m->createObjectContainer('rptBanMatch');
+            $m->createObjectContainer('rptBanMatchBan');
+            break;
+    }
+}
+return true;

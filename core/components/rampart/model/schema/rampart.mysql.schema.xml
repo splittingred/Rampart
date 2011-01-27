@@ -35,6 +35,7 @@
         </index>
 
         <aggregate alias="EditedBy" class="modUser" local="editedby" foreign="id" cardinality="one" owner="foreign" />
+        <composite alias="Matches" class="rptBanMatchBan" local="id" foreign="ban" cardinality="many" owner="local" />
     </object>
     
     <object class="rptFlaggedUser" table="rampart_flagged_users" extends="xPDOSimpleObject">
@@ -67,5 +68,45 @@
 
         <aggregate alias="User" class="modUser" local="username" foreign="username" cardinality="one" owner="foreign" />
         <aggregate alias="ActivationResource" class="modResource" local="activation_resource_id" foreign="username" cardinality="one" owner="foreign" />
+    </object>
+
+    <object class="rptBanMatch" table="rampart_ban_matches" extends="xPDOSimpleObject">        
+        <field key="username" dbtype="varchar" precision="255" phptype="string" null="false" default="" />
+        <field key="username_match" dbtype="varchar" precision="255" phptype="string" null="false" default="" />
+        <field key="hostname" dbtype="tinytext" phptype="string" null="true" />
+        <field key="hostname_match" dbtype="tinytext" phptype="string" null="true" />
+        <field key="email" dbtype="tinytext" phptype="string" null="true" />
+        <field key="email_match" dbtype="tinytext" phptype="string" null="true" />
+        <field key="ip" dbtype="varchar" precision="60" phptype="string" null="true" />
+        <field key="ip_match" dbtype="varchar" precision="60" phptype="string" null="true" />
+        
+        <field key="useragent" dbtype="tinytext" phptype="string" null="true" />
+        <field key="createdon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="resource" dbtype="int" precision="11" attributes="unsigned" phptype="integer" null="false" default="0" index="index" />
+        
+        <index alias="username" name="username" primary="false" unique="false" type="BTREE">
+            <column key="username" length="" collation="A" null="false" />
+        </index>
+        <index alias="resource" name="resource" primary="false" unique="false" type="BTREE">
+            <column key="resource" length="" collation="A" null="false" />
+        </index>
+
+        <aggregate alias="Resource" class="modResource" local="ban" foreign="id" cardinality="one" owner="foreign" />
+        <composite alias="Bans" class="rptBanMatchBan" local="id" foreign="ban_match" cardinality="many" owner="foreign" />
+    </object>
+    
+    <object class="rptBanMatchBan" table="rampart_ban_matches_bans" extends="xPDOObject">
+        <field key="ban" dbtype="int" precision="11" attributes="unsigned" phptype="integer" null="false" default="0" index="pk" />
+        <field key="ban_match" dbtype="int" precision="11" attributes="unsigned" phptype="integer" null="false" default="0" index="pk" />
+        <field key="field" dbtype="varchar" precision="60" phptype="string" null="false" default="" index="pk" />
+
+        <index alias="PRIMARY" name="PRIMARY" primary="true" unique="true" type="BTREE">
+            <column key="ban" length="" collation="A" null="false" />
+            <column key="ban_match" length="" collation="A" null="false" />
+            <column key="field" length="" collation="A" null="false" />
+        </index>
+
+        <aggregate alias="Ban" class="rptBan" local="ban" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="BanMatch" class="rptBanMatch" local="ban_match" foreign="id" cardinality="one" owner="foreign" />
     </object>
 </model>

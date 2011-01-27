@@ -67,7 +67,7 @@ Rampart.grid.ModeratedUsers = function(config) {
             xtype: 'combo'
             ,name: 'status'
             ,hiddenName: 'status'
-            ,id: 'rpt-filter-status'
+            ,id: 'rpt-mu-filter-status'
             ,value: ''
             ,editable: false
             ,triggerAction: 'all'
@@ -90,7 +90,7 @@ Rampart.grid.ModeratedUsers = function(config) {
         },'->',{
             xtype: 'textfield'
             ,name: 'search'
-            ,id: 'rpt-tf-search'
+            ,id: 'rpt-mu-tf-search'
             ,emptyText: _('search')+'...'
             ,listeners: {
                 'change': {fn: this.search, scope: this}
@@ -107,7 +107,7 @@ Rampart.grid.ModeratedUsers = function(config) {
             }
         },{
             xtype: 'button'
-            ,id: 'rpt-filter-clear'
+            ,id: 'rpt-mu-filter-clear'
             ,text: _('filter_clear')
             ,listeners: {
                 'click': {fn: this.clearFilter, scope: this}
@@ -125,7 +125,7 @@ Ext.extend(Rampart.grid.ModeratedUsers,MODx.grid.Grid,{
     ,clearFilter: function() {
     	var s = this.getStore();
         s.baseParams.search = '';
-        Ext.getCmp('rpt-tf-search').reset();
+        Ext.getCmp('rpt-mu-tf-search').reset();
     	this.getBottomToolbar().changePage(1);
         this.refresh();
     }

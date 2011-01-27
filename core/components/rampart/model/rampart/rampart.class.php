@@ -146,24 +146,34 @@ class Rampart {
         
         /* build spam checking query */
         $c = $this->modx->newQuery('rptBan');
+        $c->select($this->modx->getSelectColumns('rptBan','rptBan'));
+        $c->select(array(
+            'IF("'.$username.'" LIKE `rptBan`.`username`,1,0) AS `username_match`',
+            'IF("'.$email.'" LIKE `rptBan`.`email`,1,0) AS `email_match`',
+            'IF("'.$hostname.'" LIKE `rptBan`.`hostname`,1,0) AS `hostname_match`',
+            'IF((('.$boomIp[0].' BETWEEN `rptBan`.`ip_low1` AND `rptBan`.`ip_high1`)
+             AND ('.$boomIp[1].' BETWEEN `rptBan`.`ip_low2` AND `rptBan`.`ip_high2`)
+             AND ('.$boomIp[2].' BETWEEN `rptBan`.`ip_low3` AND `rptBan`.`ip_high3`)
+             AND ('.$boomIp[3].' BETWEEN `rptBan`.`ip_low4` AND `rptBan`.`ip_high4`)),1,0) AS `ip_match`',
+        ));
         if (!empty($username)) {
             $c->orCondition(array(
-                '"'.$username.'" LIKE username',
+                '"'.$username.'" LIKE `rptBan`.`username`',
             ),null,2);
         }
         if (!empty($email)) {
             $c->orCondition(array(
-                '"'.$email.'" LIKE email',
+                '"'.$email.'" LIKE `rptBan`.`email`',
             ),null,2);
         }
         $c->orCondition(array(
-            '"'.$hostname.'" LIKE hostname',
+            '"'.$hostname.'" LIKE `rptBan`.`hostname`',
         ),null,2);
         $c->orCondition(array(
-            '(('.$boomIp[0].' BETWEEN ip_low1 AND ip_high1)
-            AND ('.$boomIp[1].' BETWEEN ip_low2 AND ip_high2)
-            AND ('.$boomIp[2].' BETWEEN ip_low3 AND ip_high3)
-            AND ('.$boomIp[3].' BETWEEN ip_low4 AND ip_high4))'
+              '(('.$boomIp[0].' BETWEEN `rptBan`.`ip_low1` AND `rptBan`.`ip_high1`)
+            AND ('.$boomIp[1].' BETWEEN `rptBan`.`ip_low2` AND `rptBan`.`ip_high2`)
+            AND ('.$boomIp[2].' BETWEEN `rptBan`.`ip_low3` AND `rptBan`.`ip_high3`)
+            AND ('.$boomIp[3].' BETWEEN `rptBan`.`ip_low4` AND `rptBan`.`ip_high4`))'
         ),null,2);
         $c->where(array(
             'active' => true,
@@ -176,9 +186,53 @@ class Rampart {
 
         $bans = $this->modx->getCollection('rptBan',$c);
         if (count($bans)) {
+            $matches = array();
+            $fieldMatches = array();
             foreach ($bans as $ban) {
+                if ($ban->get('ip_match')) {
+                    $fieldMatches['ip'] = $ban->get('ip');
+                    $matches[$ban->get('id')] = 'ip';
+                }
+                if ($ban->get('username_match')) {
+                    $fieldMatches['username'] = $ban->get('username');
+                    $matches[$ban->get('id')] = 'username';
+                }
+                if ($ban->get('hostname_match')) {
+                    $fieldMatches['hostname'] = $ban->get('hostname');
+                    $matches[$ban->get('id')] = 'hostname';
+                }
+                if ($ban->get('email_match')) {
+                    $fieldMatches['email'] = $ban->get('email');
+                    $matches[$ban->get('id')] = 'email';
+                }
+
                 $ban->set('matches',$ban->get('matches')+1);
                 $ban->save();
+            }
+            
+            $match = $this->modx->newObject('rptBanMatch');
+            $match->set('ip',$ip);
+            $match->set('hostname',$hostname);
+            $match->set('username',$username);
+            $match->set('email',$email);
+            $match->set('useragent',$_SERVER['HTTP_USER_AGENT']);
+
+            if (!empty($fieldMatches['ip'])) $match->set('ip_match',$fieldMatches['ip']);
+            if (!empty($fieldMatches['username'])) $match->set('username_match',$fieldMatches['username']);
+            if (!empty($fieldMatches['hostname'])) $match->set('hostname_match',$fieldMatches['hostname']);
+            if (!empty($fieldMatches['email'])) $match->set('email_match',$fieldMatches['email']);
+
+            $match->set('resource',$this->modx->resource->get('id'));
+            $match->set('createdon',time());
+
+            if ($match->save()) {
+                foreach ($matches as $banId => $field) {
+                    $bmb = $this->modx->newObject('rptBanMatchBan');
+                    $bmb->set('ban',$banId);
+                    $bmb->set('ban_match',$match->get('id'));
+                    $bmb->set('field',$field);
+                    $bmb->save();
+                }
             }
             $status = Rampart::STATUS_BANNED;
         }

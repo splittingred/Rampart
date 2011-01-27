@@ -2,4 +2,5 @@ Changelog for Rampart.
 
 Rampart 1.0.0
 ==============
+- [#3651] Added Ban Matches, which log the matches on any of your bans and make them viewable in a grid
 - Initial release.
