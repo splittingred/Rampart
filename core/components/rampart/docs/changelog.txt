@@ -2,5 +2,7 @@ Changelog for Rampart.
 
 Rampart 1.0.0
 ==============
-- [#3651] Added Ban Matches, which log the matches on any of your bans and make them viewable in a grid
+- [#3650] Add hook.RampartFormIt, a hook for integrating Rampart into generic FormIt forms
+- Add column on Ban Matches grid that shows the Resource the match occurred on
+- [#3651] Add Ban Matches, which log the matches on any of your bans and make them viewable in a grid
 - Initial release.

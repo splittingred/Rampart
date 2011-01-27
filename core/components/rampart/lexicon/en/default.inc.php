@@ -82,6 +82,7 @@ $_lang['rampart.reason_desc'] = 'Optional. A brief reason for the ban.';
 $_lang['rampart.reject_selected'] = 'Reject Selected Registrations';
 $_lang['rampart.rejected'] = 'Rejected';
 $_lang['rampart.remove_selected'] = 'Remove Selected';
+$_lang['rampart.resource'] = 'Resource';
 $_lang['rampart.useragent'] = 'User Agent';
 $_lang['rampart.username'] = 'Username';
 $_lang['rampart.username_desc'] = 'A username pattern to ban from. May use % as a wildcard.';

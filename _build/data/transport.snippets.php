@@ -40,6 +40,14 @@ $snippets[0]->fromArray(array(
     'snippet' => getSnippetContent($sources['source_core'].'/elements/snippets/prehook.rampartregister.php'),
     'properties' => '',
 ),'',true,true);
-unset($properties);
+
+$snippets[1]= $modx->newObject('modSnippet');
+$snippets[1]->fromArray(array(
+    'id' => 1,
+    'name' => 'hook.RampartFormIt',
+    'description' => 'FormIt preHook for Rampart Integration into Register.',
+    'snippet' => getSnippetContent($sources['source_core'].'/elements/snippets/hook.rampartformit.php'),
+    'properties' => '',
+),'',true,true);
 
 return $snippets;

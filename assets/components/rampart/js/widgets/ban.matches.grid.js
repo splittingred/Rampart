@@ -5,7 +5,7 @@ Rampart.grid.BanMatches = function(config) {
         url: Rampart.config.connector_url
         ,baseParams: { action: 'mgr/matches/getList' }
         ,save_action: 'mgr/matches/updateFromGrid'
-        ,fields: ['id','username','username_match','email','email_match','ip','ip_match','hostname','hostname_match','useragent','createdon','resource']
+        ,fields: ['id','username','username_match','email','email_match','ip','ip_match','hostname','hostname_match','useragent','createdon','resource','pagetitle']
         ,paging: true
         ,autosave: true
         ,remoteSort: true
@@ -48,6 +48,11 @@ Rampart.grid.BanMatches = function(config) {
             ,dataIndex: 'createdon'
             ,sortable: true
             ,width: 80
+        },{
+            header: _('rampart.resource')
+            ,dataIndex: 'pagetitle'
+            ,sortable: false
+            ,width: 100
         }]
         ,tbar: ['->',{
             xtype: 'textfield'

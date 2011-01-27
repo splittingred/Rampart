@@ -26,8 +26,6 @@
  */
 $modelPath = $modx->getOption('rampart.core_path',null,$modx->getOption('core_path').'components/rampart/').'model/';
 $rampart = $modx->getService('rampart','Rampart',$modelPath.'rampart/');
-$isBanned = false;
-$isRestricted = false;
 
 $username = $fields[$usernameField];
 $email = $fields['email'];
