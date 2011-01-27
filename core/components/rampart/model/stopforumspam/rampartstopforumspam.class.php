@@ -25,8 +25,8 @@
  * @package rampart
  * @subpackage stopforumspam
  */
-if (!class_exists('StopForumSpam')) {
-class StopForumSpam {
+if (!class_exists('RampartStopForumSpam')) {
+class RampartStopForumSpam {
 
     function __construct(modX &$modx, array $config = array()) {
         $this->modx =& $modx;
@@ -82,9 +82,9 @@ class StopForumSpam {
             return true;
         }
 
-        $response = $this->modx->rest->request($this->config['host'],$this->config['path'],$this->config['method'],$params);
-        $responseXml = $response->toXml();
-        return $responseXml;
+        $this->response = $this->modx->rest->request($this->config['host'],$this->config['path'],$this->config['method'],$params);
+        $this->responseXml = $this->response->toXml();
+        return $this->responseXml;
     }
 
     /**

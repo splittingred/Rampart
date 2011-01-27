@@ -63,6 +63,7 @@ $_lang['rampart.flag_approve'] = 'Approve Registration';
 $_lang['rampart.flag_ipusername'] = 'Matched IP/Username';
 $_lang['rampart.flag_email'] = 'Spammer Email';
 $_lang['rampart.flag_reject'] = 'Reject Registration';
+$_lang['rampart.flag_sfsip'] = 'Matched StopForumSpam IP';
 $_lang['rampart.flaggedon'] = 'Flagged On';
 $_lang['rampart.flaggedfor'] = 'Flagged For';
 $_lang['rampart.hostname'] = 'Hostname';
@@ -86,3 +87,8 @@ $_lang['rampart.resource'] = 'Resource';
 $_lang['rampart.useragent'] = 'User Agent';
 $_lang['rampart.username'] = 'Username';
 $_lang['rampart.username_desc'] = 'A username pattern to ban from. May use % as a wildcard.';
+
+$_lang['setting_rampart.sfs_ipban_threshold'] = 'StopForumSpam IP Ban Threshold';
+$_lang['setting_rampart.sfs_ipban_threshold_desc'] = 'If an IP has been reported by StopForumSpam as being a spammer X number of times, automatically add a temporary ban for that IP. Set to 0 to not use this feature.';
+$_lang['setting_rampart.sfs_ipban_expiration'] = 'StopForumSpam IP Ban Expiration';
+$_lang['setting_rampart.sfs_ipban_expiration'] = 'The number of days that an IP ban by StopForumSpam will last for.';

@@ -243,20 +243,58 @@ class Rampart {
         //$email = 'yumunter@fmailer.net';
 
         /* Run StopForumSpam checks */
-        if ($this->modx->loadClass('stopforumspam.StopForumSpam',$this->config['modelPath'],true,true)) {
-            $sfspam = new StopForumSpam($this->modx);
+        if ($this->modx->loadClass('stopforumspam.RampartStopForumSpam',$this->config['modelPath'],true,true)) {
+            $sfspam = new RampartStopForumSpam($this->modx);
             $spamResult = $sfspam->check($ip,$email,$username);
             if (!empty($spamResult)) {
                 if (in_array('Ip',$spamResult) && in_array('Username',$spamResult)) {
+                    /**
+                     * If ip AND username match, moderate user
+                     */
                     $status = Rampart::STATUS_MODERATED;
                     $reason = 'ipusername';
                 } else if (in_array('Email',$spamResult)) {
+                    /**
+                     * Moderate users who match the email
+                     */
                     $status = Rampart::STATUS_MODERATED;
                     $reason = 'email';
                 } else if (in_array('Ip',$spamResult)) {
-                    /* TODO: here we would add a "threshold" of sorts, if an IP positive
-                     * happens a lot, we would add to the ban/flagged list
-                     */
+                    $threshold = $this->modx->getOption('rampart.sfs_ipban_threshold',null,25); /* threshold of reported times by SFS */
+                    $expiration = $this->modx->getOption('rampart.sfs_ipban_expiration',null,30); /* # of days to ban */
+                    if ($threshold > 0) {
+                        /**
+                         * If the IP of the spammer shows up past our threshold
+                         * of frequency times that StopForumSpam reports as,
+                         * add a single-ip ban for a certain amount of time
+                         */
+                        $ipResult = $sfspam->check($ip);
+                        if (!empty($ipResult)) {
+                            $ips = $sfspam->responseXml;
+                            $frequency = (int)$ips->frequency;
+                            if ($frequency >= $threshold) {
+                                $future = time() + ($expiration * 24 * 60 * 60);
+                                $ban = $this->modx->newObject('rptBan');
+                                $ban->set('reason','StopForumSpam IP Ban');
+                                $ban->set('createdon',time());
+                                $ban->set('expireson',$future);
+                                $ban->set('active',true);
+                                $boomIp = explode('.',$ip);
+                                $ban->set('ip_low1',$boomIp[0]);
+                                $ban->set('ip_high1',$boomIp[0]);
+                                $ban->set('ip_low2',$boomIp[1]);
+                                $ban->set('ip_high2',$boomIp[1]);
+                                $ban->set('ip_low3',$boomIp[2]);
+                                $ban->set('ip_high3',$boomIp[2]);
+                                $ban->set('ip_low4',$boomIp[3]);
+                                $ban->set('ip_high4',$boomIp[3]);
+                                $ban->set('matches',1);
+                                $ban->save();
+                                $status = Rampart::STATUS_BANNED;
+                                $reason = 'sfsip';
+                            }
+                        }
+                    }
                 }
             }
         } else {

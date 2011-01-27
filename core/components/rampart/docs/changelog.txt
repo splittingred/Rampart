@@ -2,6 +2,7 @@ Changelog for Rampart.
 
 Rampart 1.0.0
 ==============
+- [#3628] Automatically temporarily ban IPs that have been reported by StopForumSpam above a certain threshold for X days
 - [#3650] Add hook.RampartFormIt, a hook for integrating Rampart into generic FormIt forms
 - Add column on Ban Matches grid that shows the Resource the match occurred on
 - [#3651] Add Ban Matches, which log the matches on any of your bans and make them viewable in a grid

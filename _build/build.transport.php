@@ -35,7 +35,7 @@ set_time_limit(0);
 define('PKG_NAME','Rampart');
 define('PKG_NAME_LOWER',strtolower(PKG_NAME));
 define('PKG_VERSION','1.0.0');
-define('PKG_RELEASE','beta4');
+define('PKG_RELEASE','rc1');
 
 /* define sources */
 $root = dirname(dirname(__FILE__)).'/';
@@ -85,7 +85,6 @@ $builder->putVehicle($vehicle);
 unset($vehicle,$action);
 
 /* load system settings */
-/*
 $settings = include_once $sources['data'].'transport.settings.php';
 $attributes= array(
     xPDOTransport::UNIQUE_KEY => 'key',
@@ -96,7 +95,6 @@ foreach ($settings as $setting) {
     $vehicle = $builder->createVehicle($setting,$attributes);
     $builder->putVehicle($vehicle);
 }
- */
 
 /* create category */
 $category= $modx->newObject('modCategory');
