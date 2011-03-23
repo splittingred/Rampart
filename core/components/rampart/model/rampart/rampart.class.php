@@ -139,7 +139,6 @@ class Rampart {
     public function check($username = '',$email = '') {
         $ip = $_SERVER['REMOTE_ADDR'];
         if ($ip == '::1') $ip = '72.177.93.127';
-        $ip = '109.230.213.121';
         /* demo spammer data */
         //$ip = '109.230.213.121';
         //$username = 'RyanHG';
