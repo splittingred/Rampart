@@ -375,7 +375,6 @@ class Rampart {
         $ban->set('ip',$ip);
         $ban->set('expireson',$future);
         $ban->set('last_activity',$lastActive);
-        //var_dump($ban->toArray()); die();
         return $ban->save();
     }
 
