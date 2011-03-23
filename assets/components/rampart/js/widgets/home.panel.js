@@ -51,6 +51,17 @@ Rampart.panel.Home = function(config) {
                     xtype: 'rpt-grid-ban-matches'
                     ,preventRender: true
                 }]
+            },{
+                title: _('rampart.whitelist')
+                ,defaults: { autoHeight: true }
+                ,items: [{
+                    html: '<p>'+_('rampart.whitelist.intro_msg')+'</p>'
+                    ,border: false
+                    ,bodyStyle: 'padding: 10px'
+                },{
+                    xtype: 'rpt-grid-whitelist'
+                    ,preventRender: true
+                }]
             }]
         }]
     });
@@ -272,7 +283,7 @@ Ext.extend(Rampart.grid.Bans,MODx.grid.Grid,{
             ,url: this.config.url
             ,params: {
                 action: 'mgr/ban/removeMultiple'
-                ,threads: cs
+                ,bans: cs
             }
             ,listeners: {
                 'success': {fn:function(r) {

@@ -2,6 +2,7 @@ Changelog for Rampart.
 
 Rampart 1.1.0
 ==============
+- Add WhiteList support
 - Add ProjectHoneyPot DNS blacklist integration
 
 Rampart 1.0.0

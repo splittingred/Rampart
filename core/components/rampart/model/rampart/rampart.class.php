@@ -137,37 +137,61 @@ class Rampart {
      * Run the spam checks
      */
     public function check($username = '',$email = '') {
-        $status = Rampart::STATUS_OK;
-
         $ip = $_SERVER['REMOTE_ADDR'];
         if ($ip == '::1') $ip = '72.177.93.127';
-        $hostname = gethostbyaddr($ip);
-        $boomIp = explode('.',$ip);
-        
+        $ip = '109.230.213.121';
+        /* demo spammer data */
+        //$ip = '109.230.213.121';
+        //$username = 'RyanHG';
+        //$email = 'yumunter@fmailer.net';
+
+        $result = array(
+            Rampart::STATUS => Rampart::STATUS_OK,
+            Rampart::REASON => '',
+            Rampart::IP => $ip,
+            Rampart::HOSTNAME => gethostbyaddr($ip),
+            Rampart::EMAIL => $email,
+            Rampart::USERNAME => $username,
+            Rampart::USER_AGENT => $_SERVER['HTTP_USER_AGENT'],
+        );
+
+        if (!$this->checkWhiteList($result)) {
+            /* check Rampart ban list */
+            $result = $this->checkBanList($result);
+
+            /* Run StopForumSpam checks */
+            $result = $this->runStopForumSpamChecks($result);
+        }
+        return $result;
+    }
+
+    public function checkBanList($result) {
+        $boomIp = explode('.',$result[Rampart::IP]);
+
         /* build spam checking query */
         $c = $this->modx->newQuery('rptBan');
         $c->select($this->modx->getSelectColumns('rptBan','rptBan'));
         $c->select(array(
-            'IF("'.$username.'" LIKE `rptBan`.`username`,1,0) AS `username_match`',
-            'IF("'.$email.'" LIKE `rptBan`.`email`,1,0) AS `email_match`',
-            'IF("'.$hostname.'" LIKE `rptBan`.`hostname`,1,0) AS `hostname_match`',
+            'IF("'.$result[Rampart::USERNAME].'" LIKE `rptBan`.`username`,1,0) AS `username_match`',
+            'IF("'.$result[Rampart::EMAIL].'" LIKE `rptBan`.`email`,1,0) AS `email_match`',
+            'IF("'.$result[Rampart::HOSTNAME].'" LIKE `rptBan`.`hostname`,1,0) AS `hostname_match`',
             'IF((('.$boomIp[0].' BETWEEN `rptBan`.`ip_low1` AND `rptBan`.`ip_high1`)
              AND ('.$boomIp[1].' BETWEEN `rptBan`.`ip_low2` AND `rptBan`.`ip_high2`)
              AND ('.$boomIp[2].' BETWEEN `rptBan`.`ip_low3` AND `rptBan`.`ip_high3`)
              AND ('.$boomIp[3].' BETWEEN `rptBan`.`ip_low4` AND `rptBan`.`ip_high4`)),1,0) AS `ip_match`',
         ));
-        if (!empty($username)) {
+        if (!empty($result[Rampart::USERNAME])) {
             $c->orCondition(array(
-                '"'.$username.'" LIKE `rptBan`.`username`',
+                '"'.$result[Rampart::USERNAME].'" LIKE rptBan.username',
             ),null,2);
         }
-        if (!empty($email)) {
+        if (!empty($result[Rampart::EMAIL])) {
             $c->orCondition(array(
-                '"'.$email.'" LIKE `rptBan`.`email`',
+                '"'.$result[Rampart::EMAIL].'" LIKE rptBan.email',
             ),null,2);
         }
         $c->orCondition(array(
-            '"'.$hostname.'" LIKE `rptBan`.`hostname`',
+            '"'.$result[Rampart::HOSTNAME].'" LIKE rptBan.hostname',
         ),null,2);
         $c->orCondition(array(
               '(('.$boomIp[0].' BETWEEN `rptBan`.`ip_low1` AND `rptBan`.`ip_high1`)
@@ -209,13 +233,13 @@ class Rampart {
                 $ban->set('matches',$ban->get('matches')+1);
                 $ban->save();
             }
-            
+
             $match = $this->modx->newObject('rptBanMatch');
-            $match->set('ip',$ip);
-            $match->set('hostname',$hostname);
-            $match->set('username',$username);
-            $match->set('email',$email);
-            $match->set('useragent',$_SERVER['HTTP_USER_AGENT']);
+            $match->set('ip',$result[Rampart::IP]);
+            $match->set('hostname',$result[Rampart::HOSTNAME]);
+            $match->set('username',$result[Rampart::USERNAME]);
+            $match->set('email',$result[Rampart::EMAIL]);
+            $match->set('useragent',$result[Rampart::USER_AGENT]);
 
             if (!empty($fieldMatches['ip'])) $match->set('ip_match',$fieldMatches['ip']);
             if (!empty($fieldMatches['username'])) $match->set('username_match',$fieldMatches['username']);
@@ -234,31 +258,30 @@ class Rampart {
                     $bmb->save();
                 }
             }
-            $status = Rampart::STATUS_BANNED;
+            $result[Rampart::STATUS] = Rampart::STATUS_BANNED;
         }
+        return $result;
+    }
 
-        /* demo spammer data */
-        //$ip = '109.230.213.121';
-        //$username = 'RyanHG';
-        //$email = 'yumunter@fmailer.net';
 
+    public function runStopForumSpamChecks(array $result = array()) {
         /* Run StopForumSpam checks */
         if ($this->modx->loadClass('stopforumspam.RampartStopForumSpam',$this->config['modelPath'],true,true)) {
             $sfspam = new RampartStopForumSpam($this->modx);
-            $spamResult = $sfspam->check($ip,$email,$username);
+            $spamResult = $sfspam->check($result[Rampart::IP],$result[Rampart::EMAIL],$result[Rampart::USERNAME]);
             if (!empty($spamResult)) {
                 if (in_array('Ip',$spamResult) && in_array('Username',$spamResult)) {
                     /**
                      * If ip AND username match, moderate user
                      */
-                    $status = Rampart::STATUS_MODERATED;
-                    $reason = 'ipusername';
+                    $result[Rampart::STATUS] = Rampart::STATUS_MODERATED;
+                    $result[Rampart::REASON] = 'ipusername';
                 } else if (in_array('Email',$spamResult)) {
                     /**
                      * Moderate users who match the email
                      */
-                    $status = Rampart::STATUS_MODERATED;
-                    $reason = 'email';
+                    $result[Rampart::STATUS] = Rampart::STATUS_MODERATED;
+                    $result[Rampart::REASON] = 'email';
                 } else if (in_array('Ip',$spamResult)) {
                     $threshold = $this->modx->getOption('rampart.sfs_ipban_threshold',null,25); /* threshold of reported times by SFS */
                     $expiration = $this->modx->getOption('rampart.sfs_ipban_expiration',null,30); /* # of days to ban */
@@ -268,14 +291,14 @@ class Rampart {
                          * of frequency times that StopForumSpam reports as,
                          * add a single-ip ban for a certain amount of time
                          */
-                        $ipResult = $sfspam->check($ip);
+                        $ipResult = $sfspam->check($result[Rampart::IP]);
                         if (!empty($ipResult)) {
                             $ips = $sfspam->responseXml;
                             $frequency = (int)$ips->frequency;
                             if ($frequency >= $threshold) {
-                                $this->addBan($ip,'StopForumSpam IP Ban',$expiration);
-                                $status = Rampart::STATUS_BANNED;
-                                $reason = 'sfsip';
+                                $this->addBan($result[Rampart::IP],'StopForumSpam IP Ban',$expiration);
+                                $result[Rampart::STATUS] = Rampart::STATUS_BANNED;
+                                $result[Rampart::REASON] = 'sfsip';
                             }
                         }
                     }
@@ -284,16 +307,24 @@ class Rampart {
         } else {
             $this->modx->log(modX::LOG_LEVEL_ERROR,'[Rampart] Could not load StopForumSpam class.');
         }
+        return $result;
+    }
 
-        return array(
-            Rampart::STATUS => $status,
-            Rampart::REASON => $reason,
-            Rampart::IP => $ip,
-            Rampart::HOSTNAME => $hostname,
-            Rampart::EMAIL => $email,
-            Rampart::USERNAME => $username,
-            Rampart::USER_AGENT => $_SERVER['HTTP_USER_AGENT'],
-        );
+    /**
+     * Check to see if an IP is on the WhiteList
+     * 
+     * @param string $ip The IP of the client to check against
+     * @param string $email The email to also check against
+     * @return bool True if found on the WhiteList
+     */
+    public function checkWhiteList(array $result = array()) {
+        $c = $this->modx->newQuery('rptWhiteList');
+        $c->where(array(
+            'ip' => $result[Rampart::IP],
+            'active' => true,
+        ));
+        $count = $this->modx->getCount('rptWhiteList',$c);
+        return $count > 0;
     }
 
     /**

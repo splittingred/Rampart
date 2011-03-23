@@ -20,26 +20,17 @@
  * @package rampart
  */
 /**
- * Resolves db table creation
- *
  * @package rampart
- * @subpackage build
+ * @subpackage processors
  */
-if ($object->xpdo) {
-    switch ($options[xPDOTransport::PACKAGE_ACTION]) {
-        case xPDOTransport::ACTION_INSTALL:
-        case xPDOTransport::ACTION_UPGRADE:
-            $modx =& $object->xpdo;
-            $modelPath = $modx->getOption('rampart.core_path',null,$modx->getOption('core_path').'components/rampart/').'model/';
-            $modx->addPackage('rampart',$modelPath);
-
-            $m = $modx->getManager();
-            $m->createObjectContainer('rptBan');
-            $m->createObjectContainer('rptFlaggedUser');
-            $m->createObjectContainer('rptBanMatch');
-            $m->createObjectContainer('rptBanMatchBan');
-            $m->createObjectContainer('rptWhiteList');
-            break;
-    }
+if (empty($scriptProperties['id'])) {
+    return $modx->error->failure($modx->lexicon('rampart.whitelist_err_ns'));
 }
-return true;
+$wl = $modx->getObject('rptWhiteList',$scriptProperties['id']);
+if (empty($wl)) { return $modx->error->failure($modx->lexicon('rampart.whitelist_err_nf')); }
+
+if ($wl->remove() === false) {
+    return $modx->error->failure($modx->lexicon('rampart.whitelist_err_remove'));
+}
+
+return $modx->error->success('',$wl);
