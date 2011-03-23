@@ -60,6 +60,7 @@ unset($root);
 /* override with your own defines here (see build.config.sample.php) */
 require_once dirname(__FILE__) . '/build.config.php';
 require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
+require_once $sources['build'] . 'includes/functions.php';
 
 $modx= new modX();
 $modx->initialize('mgr');
@@ -107,7 +108,7 @@ if (is_array($settings)) {
 
 /* add plugins */
 $plugins = include $sources['data'].'transport.plugins.php';
-if (!is_array($plugins)) { $modx->log(modX::LOG_LEVEL_FATAL,'Adding plugins failed.'); }
+if (!is_array($plugins)) { $modx->log(modX::LOG_LEVEL_FATAL,'Adding Plugins failed.'); }
 $attributes= array(
     xPDOTransport::UNIQUE_KEY => 'name',
     xPDOTransport::PRESERVE_KEYS => false,
@@ -125,7 +126,7 @@ foreach ($plugins as $plugin) {
     $vehicle = $builder->createVehicle($plugin, $attributes);
     $builder->putVehicle($vehicle);
 }
-$modx->log(modX::LOG_LEVEL_INFO,'Packaged in '.count($plugins).' plugins.'); flush();
+$modx->log(modX::LOG_LEVEL_INFO,'Packaged in '.count($plugins).' Plugins.'); flush();
 unset($plugins,$plugin,$attributes);
 
 /* create category */

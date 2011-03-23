@@ -40,7 +40,7 @@ if (is_array($events) && !empty($events)) {
     $plugins[0]->addMany($events);
     $modx->log(xPDO::LOG_LEVEL_INFO,'Packaged in '.count($events).' Plugin Events for RampartWall.'); flush();
 } else {
-    $modx->log(xPDO::LOG_LEVEL_ERROR,'Could not find plugin events for RampartWall!');
+    $modx->log(xPDO::LOG_LEVEL_ERROR,'Could not find Plugin Events for RampartWall!');
 }
 unset($events);
 
