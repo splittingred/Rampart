@@ -8,6 +8,7 @@ $xpdo_meta_map['rptBan']= array (
   'fields' => 
   array (
     'reason' => NULL,
+    'ip' => '',
     'ip_low1' => 0,
     'ip_high1' => 0,
     'ip_low2' => 0,
@@ -26,6 +27,7 @@ $xpdo_meta_map['rptBan']= array (
     'expireson' => NULL,
     'notes' => NULL,
     'active' => 0,
+    'last_activity' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -34,6 +36,14 @@ $xpdo_meta_map['rptBan']= array (
       'dbtype' => 'tinytext',
       'phptype' => 'string',
       'null' => true,
+    ),
+    'ip' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '100',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
     ),
     'ip_low1' => 
     array (
@@ -178,6 +188,12 @@ $xpdo_meta_map['rptBan']= array (
       'null' => false,
       'default' => 0,
       'index' => 'index',
+    ),
+    'last_activity' => 
+    array (
+      'dbtype' => 'datetime',
+      'phptype' => 'datetime',
+      'null' => true,
     ),
   ),
   'aggregates' => 

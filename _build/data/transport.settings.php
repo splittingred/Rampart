@@ -25,6 +25,7 @@
  */
 $settings = array();
 
+/* StopForumSpam */
 $settings['rampart.sfs_ipban_threshold']= $modx->newObject('modSystemSetting');
 $settings['rampart.sfs_ipban_threshold']->fromArray(array(
     'key' => 'rampart.sfs_ipban_threshold',
@@ -40,6 +41,48 @@ $settings['rampart.sfs_ipban_expiration']->fromArray(array(
     'xtype' => 'textfield',
     'namespace' => 'rampart',
     'area' => 'StopForumSpam',
+),'',true,true);
+
+/* HoneyPot */
+$settings['rampart.honeypot.access_key']= $modx->newObject('modSystemSetting');
+$settings['rampart.honeypot.access_key']->fromArray(array(
+    'key' => 'rampart.honeypot.access_key',
+    'value' => '',
+    'xtype' => 'textfield',
+    'namespace' => 'rampart',
+    'area' => 'HoneyPot',
+),'',true,true);
+$settings['rampart.honeypot.ban_expiration']= $modx->newObject('modSystemSetting');
+$settings['rampart.honeypot.ban_expiration']->fromArray(array(
+    'key' => 'rampart.honeypot.ban_expiration',
+    'value' => 30,
+    'xtype' => 'textfield',
+    'namespace' => 'rampart',
+    'area' => 'HoneyPot',
+),'',true,true);
+$settings['rampart.honeypot.blacklist_message']= $modx->newObject('modSystemSetting');
+$settings['rampart.honeypot.blacklist_message']->fromArray(array(
+    'key' => 'rampart.honeypot.blacklist_message',
+    'value' => 'Sorry, you have been blacklisted.',
+    'xtype' => 'textfield',
+    'namespace' => 'rampart',
+    'area' => 'HoneyPot',
+),'',true,true);
+$settings['rampart.honeypot.blhost']= $modx->newObject('modSystemSetting');
+$settings['rampart.honeypot.blhost']->fromArray(array(
+    'key' => 'rampart.honeypot.blhost',
+    'value' => 'dnsbl.httpbl.org',
+    'xtype' => 'textfield',
+    'namespace' => 'rampart',
+    'area' => 'HoneyPot',
+),'',true,true);
+$settings['rampart.honeypot.enabled']= $modx->newObject('modSystemSetting');
+$settings['rampart.honeypot.enabled']->fromArray(array(
+    'key' => 'rampart.honeypot.enabled',
+    'value' => false,
+    'xtype' => 'combo-boolean',
+    'namespace' => 'rampart',
+    'area' => 'HoneyPot',
 ),'',true,true);
 
 return $settings;

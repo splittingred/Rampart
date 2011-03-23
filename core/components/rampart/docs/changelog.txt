@@ -1,5 +1,9 @@
 Changelog for Rampart.
 
+Rampart 1.1.0
+==============
+- Add ProjectHoneyPot DNS blacklist integration
+
 Rampart 1.0.0
 ==============
 - [#3649] Add simple ban checking for Quip snippet

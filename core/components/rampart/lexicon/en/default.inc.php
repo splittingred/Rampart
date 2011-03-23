@@ -91,4 +91,15 @@ $_lang['rampart.username_desc'] = 'A username pattern to ban from. May use % as 
 $_lang['setting_rampart.sfs_ipban_threshold'] = 'StopForumSpam IP Ban Threshold';
 $_lang['setting_rampart.sfs_ipban_threshold_desc'] = 'If an IP has been reported by StopForumSpam as being a spammer X number of times, automatically add a temporary ban for that IP. Set to 0 to not use this feature.';
 $_lang['setting_rampart.sfs_ipban_expiration'] = 'StopForumSpam IP Ban Expiration';
-$_lang['setting_rampart.sfs_ipban_expiration'] = 'The number of days that an IP ban by StopForumSpam will last for.';
+$_lang['setting_rampart.sfs_ipban_expiration_desc'] = 'The number of days that an IP ban by StopForumSpam will last for.';
+
+$_lang['setting_rampart.honeypot.enabled'] = 'Enable ProjectHoneyPot Blacklist';
+$_lang['setting_rampart.honeypot.enabled_desc'] = 'If true, will enable Blacklist banning for your site via Project Honey Pot.';
+$_lang['setting_rampart.honeypot.access_key'] = 'ProjectHoneyPot Access Key';
+$_lang['setting_rampart.honeypot.access_key_desc'] = 'The Access Key for your HoneyPot account. This is required for the HoneyPot service to run.';
+$_lang['setting_rampart.honeypot.ban_expiration'] = 'ProjectHoneyPot Ban Expiration';
+$_lang['setting_rampart.honeypot.ban_expiration_desc'] = 'The number of days that a HoneyPot blacklist ban will last for.';
+$_lang['setting_rampart.honeypot.blacklist_message'] = 'ProjectHoneyPot Blacklist Ban Message';
+$_lang['setting_rampart.honeypot.blacklist_message_desc'] = 'The message to display for IPs that have been banned by the HoneyPot blacklist.';
+$_lang['setting_rampart.honeypot.blhost'] = 'ProjectHoneyPot Blacklist Host';
+$_lang['setting_rampart.honeypot.blhost_desc'] = 'The hostname for the Project Honey Pot Blacklist service.';

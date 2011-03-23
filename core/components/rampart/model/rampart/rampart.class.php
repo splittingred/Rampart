@@ -273,23 +273,7 @@ class Rampart {
                             $ips = $sfspam->responseXml;
                             $frequency = (int)$ips->frequency;
                             if ($frequency >= $threshold) {
-                                $future = time() + ($expiration * 24 * 60 * 60);
-                                $ban = $this->modx->newObject('rptBan');
-                                $ban->set('reason','StopForumSpam IP Ban');
-                                $ban->set('createdon',time());
-                                $ban->set('expireson',$future);
-                                $ban->set('active',true);
-                                $boomIp = explode('.',$ip);
-                                $ban->set('ip_low1',$boomIp[0]);
-                                $ban->set('ip_high1',$boomIp[0]);
-                                $ban->set('ip_low2',$boomIp[1]);
-                                $ban->set('ip_high2',$boomIp[1]);
-                                $ban->set('ip_low3',$boomIp[2]);
-                                $ban->set('ip_high3',$boomIp[2]);
-                                $ban->set('ip_low4',$boomIp[3]);
-                                $ban->set('ip_high4',$boomIp[3]);
-                                $ban->set('matches',1);
-                                $ban->save();
+                                $this->addBan($ip,'StopForumSpam IP Ban',$expiration);
                                 $status = Rampart::STATUS_BANNED;
                                 $reason = 'sfsip';
                             }
@@ -298,7 +282,7 @@ class Rampart {
                 }
             }
         } else {
-            $this->modx->log(modX::LOG_LEVEL_ERROR,'[Rampart] Couldnt load StopForumSpam class.');
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'[Rampart] Could not load StopForumSpam class.');
         }
 
         return array(
@@ -327,6 +311,42 @@ class Rampart {
             }
         }
         return $pword;
+    }
+
+    /**
+     * Add a ban to the banlist
+     */
+    public function addBan($ip,$reason,$expires = 30,$lastActive = null) {
+        $future = time() + ($expires * 24 * 60 * 60);
+        if (empty($lastActive)) $lastActive = time();
+
+        $ban = $this->modx->getObject('rptBan',array(
+            'ip' => $ip,
+        ));
+        if ($ban) {
+            $matches = (int)$ban->get('matches') + 1;
+            $ban->set('matches',$matches);
+        } else {
+            $ban = $this->modx->newObject('rptBan');
+            $ban->set('reason',$reason);
+            $ban->set('createdon',time());
+            $ban->set('active',true);
+            $boomIp = explode('.',$ip);
+            $ban->set('ip_low1',$boomIp[0]);
+            $ban->set('ip_high1',$boomIp[0]);
+            $ban->set('ip_low2',$boomIp[1]);
+            $ban->set('ip_high2',$boomIp[1]);
+            $ban->set('ip_low3',$boomIp[2]);
+            $ban->set('ip_high3',$boomIp[2]);
+            $ban->set('ip_low4',$boomIp[3]);
+            $ban->set('ip_high4',$boomIp[3]);
+            $ban->set('matches',1);
+        }
+        $ban->set('ip',$ip);
+        $ban->set('expireson',$future);
+        $ban->set('last_activity',$lastActive);
+        //var_dump($ban->toArray()); die();
+        return $ban->save();
     }
 
 

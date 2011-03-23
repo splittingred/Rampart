@@ -34,20 +34,26 @@ set_time_limit(0);
 /* define package */
 define('PKG_NAME','Rampart');
 define('PKG_NAME_LOWER',strtolower(PKG_NAME));
-define('PKG_VERSION','1.0.0');
-define('PKG_RELEASE','pl');
+define('PKG_VERSION','1.1.0');
+define('PKG_RELEASE','rc1');
 
 /* define sources */
 $root = dirname(dirname(__FILE__)).'/';
 $sources= array (
     'root' => $root,
     'build' => $root .'_build/',
-    'lexicon' => $root . 'core/components/rampart/lexicon/',
     'resolvers' => $root . '_build/resolvers/',
     'data' => $root . '_build/data/',
-    'source_core' => $root.'core/components/rampart',
-    'source_assets' => $root.'assets/components/rampart',
-    'docs' => $root.'core/components/rampart/docs/',
+    'events' => $root . '_build/data/events/',
+    'permissions' => $root . '_build/data/permissions/',
+    'properties' => $root . '_build/data/properties/',
+    'source_core' => $root.'core/components/'.PKG_NAME_LOWER,
+    'source_assets' => $root.'assets/components/'.PKG_NAME_LOWER,
+    'plugins' => $root.'core/components/'.PKG_NAME_LOWER.'/elements/plugins/',
+    'snippets' => $root.'core/components/'.PKG_NAME_LOWER.'/elements/snippets/',
+    'lexicon' => $root . 'core/components/'.PKG_NAME_LOWER.'/lexicon/',
+    'docs' => $root.'core/components/'.PKG_NAME_LOWER.'/docs/',
+    'model' => $root.'core/components/'.PKG_NAME_LOWER.'/model/',
 );
 unset($root);
 
@@ -99,6 +105,29 @@ if (is_array($settings)) {
     $modx->log(xPDO::LOG_LEVEL_INFO,'Packaged in '.count($settings).' System Settings.');
 } else { $modx->log(xPDO::LOG_LEVEL_ERROR,'Adding System Settings failed.'); }
 
+/* add plugins */
+$plugins = include $sources['data'].'transport.plugins.php';
+if (!is_array($plugins)) { $modx->log(modX::LOG_LEVEL_FATAL,'Adding plugins failed.'); }
+$attributes= array(
+    xPDOTransport::UNIQUE_KEY => 'name',
+    xPDOTransport::PRESERVE_KEYS => false,
+    xPDOTransport::UPDATE_OBJECT => true,
+    xPDOTransport::RELATED_OBJECTS => true,
+    xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array (
+        'PluginEvents' => array(
+            xPDOTransport::PRESERVE_KEYS => true,
+            xPDOTransport::UPDATE_OBJECT => false,
+            xPDOTransport::UNIQUE_KEY => array('pluginid','event'),
+        ),
+    ),
+);
+foreach ($plugins as $plugin) {
+    $vehicle = $builder->createVehicle($plugin, $attributes);
+    $builder->putVehicle($vehicle);
+}
+$modx->log(modX::LOG_LEVEL_INFO,'Packaged in '.count($plugins).' plugins.'); flush();
+unset($plugins,$plugin,$attributes);
+
 /* create category */
 $category= $modx->newObject('modCategory');
 $category->set('id',1);
@@ -136,6 +165,9 @@ $vehicle->resolve('file',array(
 ));
 $vehicle->resolve('php',array(
     'source' => $sources['resolvers'] . 'resolve.tables.php',
+));
+$vehicle->resolve('php',array(
+    'source' => $sources['resolvers'] . 'resolve.dbchanges.php',
 ));
 $builder->putVehicle($vehicle);
 

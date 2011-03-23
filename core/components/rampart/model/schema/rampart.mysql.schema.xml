@@ -2,6 +2,7 @@
 <model package="rampart" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM">
     <object class="rptBan" table="rampart_bans" extends="xPDOSimpleObject">
         <field key="reason" dbtype="tinytext" phptype="string" null="true" />
+        <field key="ip" dbtype="varchar" precision="100" phptype="string" null="false" default="" />
         <field key="ip_low1" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
         <field key="ip_high1" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
         <field key="ip_low2" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
@@ -20,6 +21,7 @@
         <field key="expireson" dbtype="datetime" phptype="datetime" null="true" index="index" />
         <field key="notes" dbtype="text" phptype="string" null="true" />
         <field key="active" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="0" index="index" />
+        <field key="last_activity" dbtype="datetime" phptype="datetime" null="true" />
 
         <index alias="bangroup" name="bangroup" primary="false" unique="false" type="BTREE">
             <column key="bangroup" length="" collation="A" null="false" />
