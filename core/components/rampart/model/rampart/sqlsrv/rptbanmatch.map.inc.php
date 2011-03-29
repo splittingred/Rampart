@@ -23,7 +23,7 @@ $xpdo_meta_map['rptBanMatch']= array (
   array (
     'username' => 
     array (
-      'dbtype' => 'varchar',
+      'dbtype' => 'nvarchar',
       'precision' => '255',
       'phptype' => 'string',
       'null' => false,
@@ -31,7 +31,7 @@ $xpdo_meta_map['rptBanMatch']= array (
     ),
     'username_match' => 
     array (
-      'dbtype' => 'varchar',
+      'dbtype' => 'nvarchar',
       'precision' => '255',
       'phptype' => 'string',
       'null' => false,
@@ -39,38 +39,42 @@ $xpdo_meta_map['rptBanMatch']= array (
     ),
     'hostname' => 
     array (
-      'dbtype' => 'tinytext',
+      'dbtype' => 'nvarchar',
+      'precision' => 'max',
       'phptype' => 'string',
       'null' => true,
     ),
     'hostname_match' => 
     array (
-      'dbtype' => 'tinytext',
+      'dbtype' => 'nvarchar',
+      'precision' => 'max',
       'phptype' => 'string',
       'null' => true,
     ),
     'email' => 
     array (
-      'dbtype' => 'tinytext',
+      'dbtype' => 'nvarchar',
+      'precision' => 'max',
       'phptype' => 'string',
       'null' => true,
     ),
     'email_match' => 
     array (
-      'dbtype' => 'tinytext',
+      'dbtype' => 'nvarchar',
+      'precision' => 'max',
       'phptype' => 'string',
       'null' => true,
     ),
     'ip' => 
     array (
-      'dbtype' => 'varchar',
+      'dbtype' => 'nvarchar',
       'precision' => '60',
       'phptype' => 'string',
       'null' => true,
     ),
     'ip_match' => 
     array (
-      'dbtype' => 'varchar',
+      'dbtype' => 'nvarchar',
       'precision' => '60',
       'phptype' => 'string',
       'null' => true,

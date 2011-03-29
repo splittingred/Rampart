@@ -31,8 +31,12 @@ $mtime = $mtime[1] + $mtime[0];
 $tstart = $mtime;
 set_time_limit(0);
 
+define('PKG_NAME','Rampart');
+define('PKG_NAME_LOWER',strtolower(PKG_NAME));
+
 require_once dirname(__FILE__) . '/build.config.php';
 include_once MODX_CORE_PATH . 'model/modx/modx.class.php';
+require_once dirname(__FILE__) . '/build.properties.php';
 $modx= new modX();
 $modx->initialize('mgr');
 $modx->loadClass('transport.modPackageBuilder','',false, true);
@@ -47,8 +51,23 @@ $sources = array(
     'model' => $root.'core/components/rampart/model/',
     'assets' => $root.'assets/components/rampart/',
 );
-$manager= $modx->getManager();
-$generator= $manager->getGenerator();
+
+foreach (array('mysql', 'sqlsrv') as $driver) {
+    $xpdo= new xPDO(
+        $properties["{$driver}_string_dsn_nodb"],
+        $properties["{$driver}_string_username"],
+        $properties["{$driver}_string_password"],
+        $properties["{$driver}_array_options"],
+        $properties["{$driver}_array_driverOptions"]
+    );
+    $xpdo->setPackage('modx', dirname(XPDO_CORE_PATH) . '/model/');
+    $xpdo->setDebug(true);
+
+    $manager= $xpdo->getManager();
+    $generator= $manager->getGenerator();
+
+    $manager= $xpdo->getManager();
+    $generator= $manager->getGenerator();
 
 $generator->classTemplate= <<<EOD
 <?php
@@ -87,7 +106,8 @@ $generator->mapHeader= <<<EOD
  * [+phpdoc-package+]
  */
 EOD;
-$generator->parseSchema($sources['model'] . 'schema/rampart.mysql.schema.xml', $sources['model']);
+    $generator->parseSchema($sources['model'] . 'schema/'.PKG_NAME_LOWER.'.'.$driver.'.schema.xml', $sources['model']);
+}
 
 
 $mtime= microtime();

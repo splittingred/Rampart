@@ -33,13 +33,14 @@ $xpdo_meta_map['rptBan']= array (
   array (
     'reason' => 
     array (
-      'dbtype' => 'tinytext',
+      'dbtype' => 'nvarchar',
+      'precision' => 'max',
       'phptype' => 'string',
       'null' => true,
     ),
     'ip' => 
     array (
-      'dbtype' => 'varchar',
+      'dbtype' => 'mvarchar',
       'precision' => '100',
       'phptype' => 'string',
       'null' => false,
@@ -119,19 +120,22 @@ $xpdo_meta_map['rptBan']= array (
     ),
     'hostname' => 
     array (
-      'dbtype' => 'tinytext',
+      'dbtype' => 'nvarchar',
+      'precision' => 'max',
       'phptype' => 'string',
       'null' => true,
     ),
     'email' => 
     array (
-      'dbtype' => 'tinytext',
+      'dbtype' => 'nvarchar',
+      'precision' => 'max',
       'phptype' => 'string',
       'null' => true,
     ),
     'username' => 
     array (
-      'dbtype' => 'tinytext',
+      'dbtype' => 'nvarchar',
+      'precision' => 'max',
       'phptype' => 'string',
       'null' => true,
     ),
@@ -181,9 +185,7 @@ $xpdo_meta_map['rptBan']= array (
     ),
     'active' => 
     array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'attributes' => 'unsigned',
+      'dbtype' => 'bit',
       'phptype' => 'boolean',
       'null' => false,
       'default' => 0,

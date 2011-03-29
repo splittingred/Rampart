@@ -164,6 +164,9 @@ class Rampart {
         return $result;
     }
 
+    /**
+     * @TODO: Make sql-agnostic for sqlsrv support
+     */
     public function checkBanList($result) {
         $boomIp = explode('.',$result[Rampart::IP]);
 

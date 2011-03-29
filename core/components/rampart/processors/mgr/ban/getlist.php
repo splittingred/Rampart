@@ -39,10 +39,11 @@ $search = $modx->getOption('search',$scriptProperties,false);
 $c = $modx->newQuery('rptBan');
 if (!empty($search)) {
     $c->where(array(
-        'OR:reason:LIKE' => '%'.$search.'%',
+        'reason:LIKE' => '%'.$search.'%',
         'OR:hostname:LIKE' => '%'.$search.'%',
         'OR:email:LIKE' => '%'.$search.'%',
         'OR:username:LIKE' => '%'.$search.'%',
+        'OR:ip:LIKE' => '%'.$search.'%',
     ));
 }
 

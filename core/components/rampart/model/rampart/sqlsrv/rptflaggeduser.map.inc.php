@@ -25,7 +25,7 @@ $xpdo_meta_map['rptFlaggedUser']= array (
   array (
     'username' => 
     array (
-      'dbtype' => 'varchar',
+      'dbtype' => 'nvarchar',
       'precision' => '255',
       'phptype' => 'string',
       'null' => false,
@@ -34,7 +34,7 @@ $xpdo_meta_map['rptFlaggedUser']= array (
     ),
     'password' => 
     array (
-      'dbtype' => 'varchar',
+      'dbtype' => 'nvarchar',
       'precision' => '255',
       'phptype' => 'string',
       'null' => false,
@@ -48,7 +48,7 @@ $xpdo_meta_map['rptFlaggedUser']= array (
     ),
     'flaggedfor' => 
     array (
-      'dbtype' => 'varchar',
+      'dbtype' => 'nvarchar',
       'precision' => '255',
       'phptype' => 'string',
       'null' => false,
@@ -56,26 +56,28 @@ $xpdo_meta_map['rptFlaggedUser']= array (
     ),
     'ip' => 
     array (
-      'dbtype' => 'varchar',
+      'dbtype' => 'nvarchar',
       'precision' => '60',
       'phptype' => 'string',
       'null' => true,
     ),
     'hostname' => 
     array (
-      'dbtype' => 'tinytext',
+      'dbtype' => 'nvarchar',
+      'precision' => 'max',
       'phptype' => 'string',
       'null' => true,
     ),
     'useragent' => 
     array (
-      'dbtype' => 'tinytext',
+      'dbtype' => 'nvarchar',
+      'precision' => 'max',
       'phptype' => 'string',
       'null' => true,
     ),
     'status' => 
     array (
-      'dbtype' => 'varchar',
+      'dbtype' => 'nvarchar',
       'precision' => '10',
       'phptype' => 'string',
       'null' => false,
@@ -100,7 +102,7 @@ $xpdo_meta_map['rptFlaggedUser']= array (
     ),
     'activation_email_tpl' => 
     array (
-      'dbtype' => 'varchar',
+      'dbtype' => 'nvarchar',
       'precision' => '255',
       'phptype' => 'string',
       'null' => false,
@@ -108,7 +110,8 @@ $xpdo_meta_map['rptFlaggedUser']= array (
     ),
     'activation_email_subject' => 
     array (
-      'dbtype' => 'tinytext',
+      'dbtype' => 'nvarchar',
+      'precision' => 'max',
       'phptype' => 'string',
       'null' => true,
     ),

@@ -19,7 +19,7 @@ $xpdo_meta_map['rptWhiteList']= array (
   array (
     'ip' => 
     array (
-      'dbtype' => 'varchar',
+      'dbtype' => 'nvarchar',
       'precision' => '60',
       'phptype' => 'string',
       'null' => true,
@@ -27,9 +27,7 @@ $xpdo_meta_map['rptWhiteList']= array (
     ),
     'active' => 
     array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'attributes' => 'unsigned',
+      'dbtype' => 'bit',
       'phptype' => 'boolean',
       'null' => false,
       'default' => 0,
@@ -37,7 +35,8 @@ $xpdo_meta_map['rptWhiteList']= array (
     ),
     'notes' => 
     array (
-      'dbtype' => 'text',
+      'dbtype' => 'nvarchar',
+      'precision' => 'max',
       'phptype' => 'string',
       'null' => true,
     ),

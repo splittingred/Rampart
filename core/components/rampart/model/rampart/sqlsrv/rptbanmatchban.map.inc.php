@@ -35,7 +35,7 @@ $xpdo_meta_map['rptBanMatchBan']= array (
     ),
     'field' => 
     array (
-      'dbtype' => 'varchar',
+      'dbtype' => 'nvarchar',
       'precision' => '60',
       'phptype' => 'string',
       'null' => false,
