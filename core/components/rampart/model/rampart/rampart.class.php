@@ -75,7 +75,7 @@ class Rampart {
      *
      * @access public
      * @param string $ctx The context to load. Defaults to web.
-     * @return void
+     * @return string
      */
     public function initialize($ctx = 'web') {
         switch ($ctx) {
@@ -85,11 +85,12 @@ class Rampart {
                     return;
                 }
                 $this->request = new RampartControllerRequest($this);
-                $this->request->handleRequest();
+                return $this->request->handleRequest();
             break;
             default:
             break;
         }
+        return '';
     }
 
     /**
