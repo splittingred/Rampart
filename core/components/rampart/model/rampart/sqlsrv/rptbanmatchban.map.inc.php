@@ -16,8 +16,6 @@ $xpdo_meta_map['rptBanMatchBan']= array (
     'ban' => 
     array (
       'dbtype' => 'int',
-      'precision' => '11',
-      'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,
@@ -26,8 +24,6 @@ $xpdo_meta_map['rptBanMatchBan']= array (
     'ban_match' => 
     array (
       'dbtype' => 'int',
-      'precision' => '11',
-      'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,

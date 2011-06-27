@@ -94,8 +94,6 @@ $xpdo_meta_map['rptBanMatch']= array (
     'resource' => 
     array (
       'dbtype' => 'int',
-      'precision' => '11',
-      'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,

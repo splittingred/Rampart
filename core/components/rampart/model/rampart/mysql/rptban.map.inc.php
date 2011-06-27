@@ -28,6 +28,7 @@ $xpdo_meta_map['rptBan']= array (
     'notes' => NULL,
     'active' => 0,
     'last_activity' => NULL,
+    'data' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -194,6 +195,11 @@ $xpdo_meta_map['rptBan']= array (
       'dbtype' => 'datetime',
       'phptype' => 'datetime',
       'null' => true,
+    ),
+    'data' => 
+    array (
+      'dbtype' => 'mediumtext',
+      'phptype' => 'json',
     ),
   ),
   'indexes' => 

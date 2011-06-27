@@ -2,26 +2,27 @@
 <model package="rampart" baseClass="xPDOObject" platform="sqlsrv">
     <object class="rptBan" table="rampart_bans" extends="xPDOSimpleObject">
         <field key="reason" dbtype="nvarchar" precision="max" phptype="string" null="true" />
-        <field key="ip" dbtype="mvarchar" precision="100" phptype="string" null="false" default="" />
-        <field key="ip_low1" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
-        <field key="ip_high1" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
-        <field key="ip_low2" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
-        <field key="ip_high2" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
-        <field key="ip_low3" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
-        <field key="ip_high3" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
-        <field key="ip_low4" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
-        <field key="ip_high4" dbtype="int" precision="3" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="ip" dbtype="nvarchar" precision="100" phptype="string" null="false" default="" />
+        <field key="ip_low1" dbtype="int" phptype="integer" null="false" default="0" />
+        <field key="ip_high1" dbtype="int" phptype="integer" null="false" default="0" />
+        <field key="ip_low2" dbtype="int" phptype="integer" null="false" default="0" />
+        <field key="ip_high2" dbtype="int" phptype="integer" null="false" default="0" />
+        <field key="ip_low3" dbtype="int" phptype="integer" null="false" default="0" />
+        <field key="ip_high3" dbtype="int" phptype="integer" null="false" default="0" />
+        <field key="ip_low4" dbtype="int" phptype="integer" null="false" default="0" />
+        <field key="ip_high4" dbtype="int" phptype="integer" null="false" default="0" />
         <field key="hostname" dbtype="nvarchar" precision="max" phptype="string" null="true" />
         <field key="email" dbtype="nvarchar" precision="max" phptype="string" null="true" />
         <field key="username" dbtype="nvarchar" precision="max" phptype="string" null="true" />
-        <field key="matches" dbtype="int" precision="11" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="matches" dbtype="int" null="false" default="0" />
         <field key="createdon" dbtype="datetime" phptype="datetime" null="true" />
         <field key="editedon" dbtype="datetime" phptype="datetime" null="true" />
-        <field key="editedby" dbtype="int" precision="11" attributes="unsigned" phptype="integer" null="false" default="0" index="index" />
+        <field key="editedby" dbtype="int" null="false" default="0" index="index" />
         <field key="expireson" dbtype="datetime" phptype="datetime" null="true" index="index" />
         <field key="notes" dbtype="text" phptype="string" null="true" />
         <field key="active" dbtype="bit" phptype="boolean" null="false" default="0" index="index" />
         <field key="last_activity" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="data" dbtype="nvarchar" precision="max" phptype="json" />
 
         <index alias="bangroup" name="bangroup" primary="false" unique="false" type="BTREE">
             <column key="bangroup" length="" collation="A" null="false" />
@@ -50,10 +51,10 @@
         <field key="useragent" dbtype="nvarchar" precision="max" phptype="string" null="true" />
         <field key="status" dbtype="nvarchar" precision="10" phptype="string" null="false" default="" index="index" />
         <field key="actedon" dbtype="datetime" phptype="datetime" null="true" />
-        <field key="actedby" dbtype="int" precision="10" attributes="unsigned" phptype="boolean" null="false" default="0" index="index" />
+        <field key="actedby" dbtype="int" aphptype="boolean" null="false" default="0" index="index" />
         <field key="activation_email_tpl" dbtype="nvarchar" precision="255" phptype="string" null="false" default="" />
         <field key="activation_email_subject" dbtype="nvarchar" precision="max" phptype="string" null="true" />
-        <field key="activation_resource_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" index="index" />
+        <field key="activation_resource_id" dbtype="int" phptype="integer" null="false" default="0" index="index" />
 
         <index alias="username" name="username" primary="false" unique="false" type="BTREE">
             <column key="username" length="" collation="A" null="false" />
@@ -84,7 +85,7 @@
 
         <field key="useragent" dbtype="tinytext" phptype="string" null="true" />
         <field key="createdon" dbtype="datetime" phptype="datetime" null="true" />
-        <field key="resource" dbtype="int" precision="11" attributes="unsigned" phptype="integer" null="false" default="0" index="index" />
+        <field key="resource" dbtype="int" phptype="integer" null="false" default="0" index="index" />
 
         <index alias="username" name="username" primary="false" unique="false" type="BTREE">
             <column key="username" length="" collation="A" null="false" />
@@ -98,8 +99,8 @@
     </object>
 
     <object class="rptBanMatchBan" table="rampart_ban_matches_bans" extends="xPDOObject">
-        <field key="ban" dbtype="int" precision="11" attributes="unsigned" phptype="integer" null="false" default="0" index="pk" />
-        <field key="ban_match" dbtype="int" precision="11" attributes="unsigned" phptype="integer" null="false" default="0" index="pk" />
+        <field key="ban" dbtype="int" phptype="integer" null="false" default="0" index="pk" />
+        <field key="ban_match" dbtype="int" phptype="integer" null="false" default="0" index="pk" />
         <field key="field" dbtype="nvarchar" precision="60" phptype="string" null="false" default="" index="pk" />
 
         <index alias="PRIMARY" name="PRIMARY" primary="true" unique="true" type="BTREE">
@@ -117,9 +118,9 @@
         <field key="active" dbtype="bit" phptype="boolean" null="false" default="0" index="index" />
         <field key="notes" dbtype="nvarchar" precision="max" phptype="string" null="true" />
         <field key="createdon" dbtype="datetime" phptype="datetime" null="true" />
-        <field key="createdby" dbtype="int" precision="11" attributes="unsigned" phptype="integer" null="false" default="0" index="index" />
+        <field key="createdby" dbtype="int" phptype="integer" null="false" default="0" index="index" />
         <field key="editedon" dbtype="datetime" phptype="datetime" null="true" />
-        <field key="editedby" dbtype="int" precision="11" attributes="unsigned" phptype="integer" null="false" default="0" index="index" />
+        <field key="editedby" dbtype="int" phptype="integer" null="false" default="0" index="index" />
 
         <index alias="ip" name="ip" primary="false" unique="false" type="BTREE">
             <column key="ip" length="" collation="A" null="false" />

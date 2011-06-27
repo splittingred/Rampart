@@ -33,8 +33,10 @@ if ($object->xpdo) {
             $modelPath = $modx->getOption('rampart.core_path',null,$modx->getOption('core_path').'components/rampart/').'model/';
             $modx->addPackage('rampart',$modelPath);
 
-            $modx->exec("ALTER TABLE {$modx->getTableName('rptBan')} ADD `ip` VARCHAR(100) NOT NULL default '' AFTER `reason`");
-            $modx->exec("ALTER TABLE {$modx->getTableName('rptBan')} ADD `last_activity` DATETIME AFTER `active`");
+            $manager = $modx->getManager();
+            $manager->addField('rptBan','ip');
+            $manager->addField('rptBan','last_activity');
+            $manager->addField('rptBan','data');
             break;
     }
 }

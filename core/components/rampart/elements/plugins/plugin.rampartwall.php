@@ -34,7 +34,12 @@ switch ($modx->event->name) {
             if ($modx->loadClass('projecthoneypot.RampartHoneyPot',$rampart->config['modelPath'],true,true)) {
                 $honey = new RampartHoneyPot($rampart);
                 if (!$honey->check()) {
-                    $honey->prevent();
+                    $info = array(
+                        Rampart::IP => $_SERVER['REMOTE_ADDR'],
+                    );
+                    if (!$rampart->checkWhiteList($info)) {
+                        $honey->prevent();
+                    }
                 }
             } else {
                 $modx->log(modX::LOG_LEVEL_ERROR,'[Rampart] Could not load RampartHoneyPot class from: '.$rampart->config['modelPath']);

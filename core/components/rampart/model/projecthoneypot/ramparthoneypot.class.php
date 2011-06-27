@@ -26,6 +26,8 @@
  */
 if (!class_exists('RampartHoneyPot')) {
 class RampartHoneyPot {
+    public $values = array();
+
     function __construct(Rampart &$rampart, array $config = array()) {
         $this->rampart =& $rampart;
         $this->modx =& $rampart->modx;
@@ -44,16 +46,16 @@ class RampartHoneyPot {
     public function check() {
         $passed = true;
         $ip = $this->_getIp();
-        $values = $this->dnsLookup($ip);
-        if (empty($values)) return $passed;
+        $this->dnsLookup($ip);
+        if (empty($this->values)) return $passed;
         
         $expires = $this->modx->getOption('rampart.honeypot.ban_expiration',$this->config,30); /* # of days to ban */
-        if (!empty($values['comment_spammer'])) {
-            $this->rampart->addBan($ip,'HoneyPot: Comment Spammer',$expires,$values['last_activity_time']);
+        if (!empty($this->values['comment_spammer'])) {
+            $this->rampart->addBan($ip,'HoneyPot: Comment Spammer',$expires,$this->values['last_activity_time'],$this->values);
             $passed = false;
         }
-        if (!empty($values['harvester'])) {
-            $this->rampart->addBan($ip,'HoneyPot: Harvester',$expires,$values['last_activity_time']);
+        if (!empty($this->values['harvester'])) {
+            $this->rampart->addBan($ip,'HoneyPot: Harvester',$expires,$this->values['last_activity_time'],$this->values);
             $passed = false;
         }
         return $passed;
@@ -62,7 +64,7 @@ class RampartHoneyPot {
     /**
      * Lookup user against HoneyPot DNS Blacklist
      * 
-     * @param  $ip The IP to check against
+     * @param string $ip The IP to check against
      * @return array|bool Either false if no return value, or an array of data about the client
      */
     public function dnsLookup($ip) {
@@ -72,6 +74,7 @@ class RampartHoneyPot {
 
         $query = $this->config['access_key'].'.'.$ip.'.'.$this->config['host'];
         $response = gethostbyname($query);
+        
         /* if response is query, then user is not in blacklist */
         if ($response == $query) {
             return true;
@@ -104,6 +107,8 @@ class RampartHoneyPot {
         if ($response[3] & 4) {
             $values['comment_spammer'] = true;
         }
+
+        $this->values = $values;
         return $values;
     }
 
@@ -111,10 +116,29 @@ class RampartHoneyPot {
      * Prevent access into site.
      */
     public function prevent() {
-        $message = $this->modx->getOption('rampart.honeypot.blacklist_message',$this->config,'Sorry, you have been blacklisted.');
+        $message = '<p>Sorry, you have been blacklisted.</p>';
+        if (!empty($this->values)) {
+            $message .= '<p><a href="http://www.projecthoneypot.org/">Project Honey Pot</a> has determined that you are one or more of the following:</p>';
+            $message .= "\n<ul>\n";
+            if (!empty($this->values['search_engine'])) {
+                $message .= "<li>Search Engine</li>\n";
+            }
+            if (!empty($this->values['suspicious'])) {
+                $message .= "<li>Suspicious Person</li>\n";
+            }
+            if (!empty($this->values['harvester'])) {
+                $message .= "<li>Harvester</li>\n";
+            }
+            if (!empty($this->values['comment_spammer'])) {
+                $message .= "<li>Comment Spammer</li>\n";
+            }
+            $message .= "\n</ul>\n";
+            $message .= '<p>If you feel this is in error, please contact Project Honey Pot or the administrator of this site.</p>';
+        }
+
         @session_write_close();
         header('HTTP/1.1 403 Forbidden');
-        echo "<html>\n<body>\n".$message."\n</body>\n</html>";
+        echo "<html>\n<head>\n<title>Access Denied</title>\n</head>\n<body>\n".$message."\n</body>\n</html>";
         exit();
     }
 
@@ -146,6 +170,7 @@ class RampartHoneyPot {
     protected function _getIp() {
         $ip = $_SERVER['REMOTE_ADDR'];
         if ($ip == '::1') $ip = '127.0.0.1';
+        $ip = '109.230.213.114';
         return $ip;
     }
 }

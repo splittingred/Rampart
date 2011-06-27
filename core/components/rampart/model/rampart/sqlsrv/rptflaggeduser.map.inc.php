@@ -93,9 +93,7 @@ $xpdo_meta_map['rptFlaggedUser']= array (
     'actedby' => 
     array (
       'dbtype' => 'int',
-      'precision' => '10',
-      'attributes' => 'unsigned',
-      'phptype' => 'boolean',
+      'aphptype' => 'boolean',
       'null' => false,
       'default' => 0,
       'index' => 'index',
@@ -118,8 +116,6 @@ $xpdo_meta_map['rptFlaggedUser']= array (
     'activation_resource_id' => 
     array (
       'dbtype' => 'int',
-      'precision' => '10',
-      'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,

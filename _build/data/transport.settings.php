@@ -60,14 +60,6 @@ $settings['rampart.honeypot.ban_expiration']->fromArray(array(
     'namespace' => 'rampart',
     'area' => 'HoneyPot',
 ),'',true,true);
-$settings['rampart.honeypot.blacklist_message']= $modx->newObject('modSystemSetting');
-$settings['rampart.honeypot.blacklist_message']->fromArray(array(
-    'key' => 'rampart.honeypot.blacklist_message',
-    'value' => 'Sorry, you have been blacklisted.',
-    'xtype' => 'textfield',
-    'namespace' => 'rampart',
-    'area' => 'HoneyPot',
-),'',true,true);
 $settings['rampart.honeypot.blhost']= $modx->newObject('modSystemSetting');
 $settings['rampart.honeypot.blhost']->fromArray(array(
     'key' => 'rampart.honeypot.blhost',

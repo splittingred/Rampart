@@ -28,6 +28,7 @@ $xpdo_meta_map['rptBan']= array (
     'notes' => NULL,
     'active' => 0,
     'last_activity' => NULL,
+    'data' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -40,7 +41,7 @@ $xpdo_meta_map['rptBan']= array (
     ),
     'ip' => 
     array (
-      'dbtype' => 'mvarchar',
+      'dbtype' => 'nvarchar',
       'precision' => '100',
       'phptype' => 'string',
       'null' => false,
@@ -49,8 +50,6 @@ $xpdo_meta_map['rptBan']= array (
     'ip_low1' => 
     array (
       'dbtype' => 'int',
-      'precision' => '3',
-      'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,
@@ -58,8 +57,6 @@ $xpdo_meta_map['rptBan']= array (
     'ip_high1' => 
     array (
       'dbtype' => 'int',
-      'precision' => '3',
-      'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,
@@ -67,8 +64,6 @@ $xpdo_meta_map['rptBan']= array (
     'ip_low2' => 
     array (
       'dbtype' => 'int',
-      'precision' => '3',
-      'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,
@@ -76,8 +71,6 @@ $xpdo_meta_map['rptBan']= array (
     'ip_high2' => 
     array (
       'dbtype' => 'int',
-      'precision' => '3',
-      'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,
@@ -85,8 +78,6 @@ $xpdo_meta_map['rptBan']= array (
     'ip_low3' => 
     array (
       'dbtype' => 'int',
-      'precision' => '3',
-      'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,
@@ -94,8 +85,6 @@ $xpdo_meta_map['rptBan']= array (
     'ip_high3' => 
     array (
       'dbtype' => 'int',
-      'precision' => '3',
-      'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,
@@ -103,8 +92,6 @@ $xpdo_meta_map['rptBan']= array (
     'ip_low4' => 
     array (
       'dbtype' => 'int',
-      'precision' => '3',
-      'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,
@@ -112,8 +99,6 @@ $xpdo_meta_map['rptBan']= array (
     'ip_high4' => 
     array (
       'dbtype' => 'int',
-      'precision' => '3',
-      'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,
@@ -142,9 +127,6 @@ $xpdo_meta_map['rptBan']= array (
     'matches' => 
     array (
       'dbtype' => 'int',
-      'precision' => '11',
-      'attributes' => 'unsigned',
-      'phptype' => 'integer',
       'null' => false,
       'default' => 0,
     ),
@@ -163,9 +145,6 @@ $xpdo_meta_map['rptBan']= array (
     'editedby' => 
     array (
       'dbtype' => 'int',
-      'precision' => '11',
-      'attributes' => 'unsigned',
-      'phptype' => 'integer',
       'null' => false,
       'default' => 0,
       'index' => 'index',
@@ -196,6 +175,12 @@ $xpdo_meta_map['rptBan']= array (
       'dbtype' => 'datetime',
       'phptype' => 'datetime',
       'null' => true,
+    ),
+    'data' => 
+    array (
+      'dbtype' => 'nvarchar',
+      'precision' => 'max',
+      'phptype' => 'json',
     ),
   ),
   'indexes' => 

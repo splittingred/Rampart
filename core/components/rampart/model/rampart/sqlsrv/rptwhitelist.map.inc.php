@@ -49,8 +49,6 @@ $xpdo_meta_map['rptWhiteList']= array (
     'createdby' => 
     array (
       'dbtype' => 'int',
-      'precision' => '11',
-      'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,
@@ -65,8 +63,6 @@ $xpdo_meta_map['rptWhiteList']= array (
     'editedby' => 
     array (
       'dbtype' => 'int',
-      'precision' => '11',
-      'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,

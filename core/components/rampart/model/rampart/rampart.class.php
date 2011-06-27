@@ -349,7 +349,7 @@ class Rampart {
     /**
      * Add a ban to the banlist
      */
-    public function addBan($ip,$reason,$expires = 30,$lastActive = null) {
+    public function addBan($ip,$reason,$expires = 30,$lastActive = null,array $data = array()) {
         $future = time() + ($expires * 24 * 60 * 60);
         if (empty($lastActive)) $lastActive = time();
 
@@ -378,6 +378,7 @@ class Rampart {
         $ban->set('ip',$ip);
         $ban->set('expireson',$future);
         $ban->set('last_activity',$lastActive);
+        $ban->set('data',$data);
         return $ban->save();
     }
 
