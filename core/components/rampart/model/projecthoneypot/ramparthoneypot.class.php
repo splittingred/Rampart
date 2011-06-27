@@ -116,7 +116,8 @@ class RampartHoneyPot {
      * Prevent access into site.
      */
     public function prevent() {
-        $message = '<p>Sorry, you have been blacklisted.</p>';
+        $message = $this->modx->getOption('rampart.honeypot.blacklist_message',null,'Sorry, you have been blacklisted.');
+        $message = '<p>'.$message.'</p>';
         if (!empty($this->values)) {
             $message .= '<p><a href="http://www.projecthoneypot.org/">Project Honey Pot</a> has determined that you are one or more of the following:</p>';
             $message .= "\n<ul>\n";
