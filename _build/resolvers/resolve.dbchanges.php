@@ -34,10 +34,19 @@ if ($object->xpdo) {
             $modx->addPackage('rampart',$modelPath);
 
             $manager = $modx->getManager();
-            $manager->addField('rptBan','ip');
-            $manager->addField('rptBan','last_activity');
-            $manager->addField('rptBan','data');
-            $manager->addField('rptBan','service');
+            $version = $modx->getVersionData();
+
+            if (version_compare($version['full_version'],'2.1.0-rc1','>=')) {
+                $manager->addField('rptBan','ip');
+                $manager->addField('rptBan','last_activity');
+                $manager->addField('rptBan','data');
+                $manager->addField('rptBan','service');
+            } else {
+                $modx->exec("ALTER TABLE {$modx->getTableName('rptBan')} ADD `ip` VARCHAR(100) NOT NULL default '' AFTER `reason`");
+                $modx->exec("ALTER TABLE {$modx->getTableName('rptBan')} ADD `last_activity` DATETIME AFTER `active`");
+                $modx->exec("ALTER TABLE {$modx->getTableName('rptBan')} ADD `data` MEDIUMTEXT");
+                $modx->exec("ALTER TABLE {$modx->getTableName('rptBan')} ADD `service` VARCHAR(100) NOT NULL default 'manual' AFTER `data`");
+            }
             break;
     }
 }
