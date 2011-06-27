@@ -23,6 +23,7 @@
         <field key="active" dbtype="bit" phptype="boolean" null="false" default="0" index="index" />
         <field key="last_activity" dbtype="datetime" phptype="datetime" null="true" />
         <field key="data" dbtype="nvarchar" precision="max" phptype="json" />
+        <field key="service" dbtype="nvarchar" precision="100" phptype="string" null="false" default="manual" />
 
         <index alias="bangroup" name="bangroup" primary="false" unique="false" type="BTREE">
             <column key="bangroup" length="" collation="A" null="false" />

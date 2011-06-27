@@ -36,6 +36,10 @@ class Rampart {
     const STATUS_BANNED = 'banned';
     const STATUS_MODERATED = 'moderated';
 
+    public $request;
+    public $modx;
+    public $config = array();
+
     function __construct(modX &$modx,array $config = array()) {
         $this->modx =& $modx;
 
@@ -71,15 +75,17 @@ class Rampart {
      *
      * @access public
      * @param string $ctx The context to load. Defaults to web.
+     * @return void
      */
     public function initialize($ctx = 'web') {
         switch ($ctx) {
             case 'mgr':
                 if (!$this->modx->loadClass('rampart.request.rampartControllerRequest',$this->config['modelPath'],true,true)) {
-                    return 'Could not load controller request handler.';
+                    $this->modx->log(modX::LOG_LEVEL_ERROR,'[Rampart] Could not load controller request handler.');
+                    return;
                 }
                 $this->request = new RampartControllerRequest($this);
-                return $this->request->handleRequest();
+                $this->request->handleRequest();
             break;
             default:
             break;
@@ -135,6 +141,10 @@ class Rampart {
 
     /**
      * Run the spam checks
+     *
+     * @param string $username
+     * @param string $email
+     * @return boolean
      */
     public function check($username = '',$email = '') {
         $ip = $_SERVER['REMOTE_ADDR'];
@@ -166,6 +176,9 @@ class Rampart {
 
     /**
      * @TODO: Make sql-agnostic for sqlsrv support
+     *
+     * @param array $result
+     * @return array
      */
     public function checkBanList($result) {
         $boomIp = explode('.',$result[Rampart::IP]);
@@ -298,9 +311,10 @@ class Rampart {
                             $ips = $sfspam->responseXml;
                             $frequency = (int)$ips->frequency;
                             if ($frequency >= $threshold) {
-                                $this->addBan($result[Rampart::IP],'StopForumSpam IP Ban',$expiration);
+                                $now = time();
                                 $result[Rampart::STATUS] = Rampart::STATUS_BANNED;
                                 $result[Rampart::REASON] = 'sfsip';
+                                $this->addBan($result[Rampart::IP],'StopForumSpam IP Ban',$expiration,$now,'stopforumspam',$result);
                             }
                         }
                     }
@@ -314,9 +328,8 @@ class Rampart {
 
     /**
      * Check to see if an IP is on the WhiteList
-     * 
-     * @param string $ip The IP of the client to check against
-     * @param string $email The email to also check against
+     *
+     * @param array $result
      * @return bool True if found on the WhiteList
      */
     public function checkWhiteList(array $result = array()) {
@@ -331,6 +344,9 @@ class Rampart {
 
     /**
      * Generate a random key password
+     *
+     * @param int $length
+     * @return string
      */
     public function generatePassword($length=8) {
         $pword = '';
@@ -348,8 +364,17 @@ class Rampart {
 
     /**
      * Add a ban to the banlist
+     *
+     * @param string $ip
+     * @param string $reason
+     * @param int $expires
+     * @param string $lastActive
+     * @param string $service
+     * @param array $data
+     * @return boolean
+     *
      */
-    public function addBan($ip,$reason,$expires = 30,$lastActive = null,array $data = array()) {
+    public function addBan($ip,$reason,$expires = 30,$lastActive = null,$service = 'manual',array $data = array()) {
         $future = time() + ($expires * 24 * 60 * 60);
         if (empty($lastActive)) $lastActive = time();
 
@@ -379,6 +404,7 @@ class Rampart {
         $ban->set('expireson',$future);
         $ban->set('last_activity',$lastActive);
         $ban->set('data',$data);
+        $ban->set('service',$service);
         return $ban->save();
     }
 
@@ -412,6 +438,7 @@ class Rampart {
             $c_t = $iv.$c_t;
             return urlencode($c_t);
         }
+        return '';
     }
 
     /**
@@ -442,6 +469,7 @@ class Rampart {
             mcrypt_module_close($td);
             return $c_t;
         }
+        return '';
     }
 
 }

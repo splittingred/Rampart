@@ -37,6 +37,7 @@ if ($object->xpdo) {
             $manager->addField('rptBan','ip');
             $manager->addField('rptBan','last_activity');
             $manager->addField('rptBan','data');
+            $manager->addField('rptBan','service');
             break;
     }
 }

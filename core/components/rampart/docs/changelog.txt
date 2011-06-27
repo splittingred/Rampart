@@ -2,6 +2,7 @@ Changelog for Rampart.
 
 Rampart 1.1.0
 ==============
+- [#5126] Store responses and source service that created each ban
 - [#5123] Add more verbose message for blacklisted users
 - [#5122] Add ban response data storage for ProjectHoneyPot
 - Add WhiteList support

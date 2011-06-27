@@ -51,11 +51,11 @@ class RampartHoneyPot {
         
         $expires = $this->modx->getOption('rampart.honeypot.ban_expiration',$this->config,30); /* # of days to ban */
         if (!empty($this->values['comment_spammer'])) {
-            $this->rampart->addBan($ip,'HoneyPot: Comment Spammer',$expires,$this->values['last_activity_time'],$this->values);
+            $this->rampart->addBan($ip,'HoneyPot: Comment Spammer',$expires,$this->values['last_activity_time'],'projecthoneypot',$this->values);
             $passed = false;
         }
         if (!empty($this->values['harvester'])) {
-            $this->rampart->addBan($ip,'HoneyPot: Harvester',$expires,$this->values['last_activity_time'],$this->values);
+            $this->rampart->addBan($ip,'HoneyPot: Harvester',$expires,$this->values['last_activity_time'],'projecthoneypot',$this->values);
             $passed = false;
         }
         return $passed;
