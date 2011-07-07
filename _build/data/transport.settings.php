@@ -84,5 +84,13 @@ $settings['rampart.honeypot.enabled']->fromArray(array(
     'namespace' => 'rampart',
     'area' => 'HoneyPot',
 ),'',true,true);
+$settings['rampart.honeypot.fullwall_enabled']= $modx->newObject('modSystemSetting');
+$settings['rampart.honeypot.fullwall_enabled']->fromArray(array(
+    'key' => 'rampart.honeypot.fullwall_enabled',
+    'value' => false,
+    'xtype' => 'combo-boolean',
+    'namespace' => 'rampart',
+    'area' => 'HoneyPot',
+),'',true,true);
 
 return $settings;

@@ -123,3 +123,5 @@ $_lang['setting_rampart.honeypot.blacklist_message'] = 'ProjectHoneyPot Blacklis
 $_lang['setting_rampart.honeypot.blacklist_message_desc'] = 'The message to display for IPs that have been banned by the HoneyPot blacklist.';
 $_lang['setting_rampart.honeypot.blhost'] = 'ProjectHoneyPot Blacklist Host';
 $_lang['setting_rampart.honeypot.blhost_desc'] = 'The hostname for the Project Honey Pot Blacklist service.';
+$_lang['setting_rampart.honeypot.fullwall_enabled'] = 'Enable ProjectHoneyPot Full Wall Blacklist';
+$_lang['setting_rampart.honeypot.fullwall_enabled_desc'] = 'If true, will enable Blacklist banning for your site that will completely prevent site viewing, via Project Honey Pot.';
