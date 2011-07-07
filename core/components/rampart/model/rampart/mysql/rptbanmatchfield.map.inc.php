@@ -2,7 +2,7 @@
 /**
  * @package rampart
  */
-$xpdo_meta_map['rptBanMatchBan']= array (
+$xpdo_meta_map['rptBanMatchField']= array (
   'package' => 'rampart',
   'table' => 'rampart_ban_matches_bans',
   'fields' => 

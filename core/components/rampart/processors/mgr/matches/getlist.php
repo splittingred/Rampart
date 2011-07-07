@@ -35,18 +35,24 @@ $sort = $modx->getOption('sort',$scriptProperties,'createdon');
 $sortAlias = $modx->getOption('sortAlias',$scriptProperties,'rptBanMatch');
 $dir = $modx->getOption('dir',$scriptProperties,'DESC');
 $search = $modx->getOption('search',$scriptProperties,false);
+$ban = $modx->getOption('ban',$scriptProperties,false);
 
 /* build query */
 $c = $modx->newQuery('rptBanMatch');
 $c->leftJoin('modResource','Resource');
+if (!empty($ban)) {
+    $c->where(array(
+        'rptBanMatch.ban' => $ban,
+    ));
+}
 if (!empty($search)) {
     $c->where(array(
-        'OR:ip:LIKE' => '%'.$search.'%',
+        'ip:LIKE' => '%'.$search.'%',
         'OR:hostname:LIKE' => '%'.$search.'%',
         'OR:email:LIKE' => '%'.$search.'%',
         'OR:username:LIKE' => '%'.$search.'%',
         'OR:useragent:LIKE' => '%'.$search.'%',
-    ));
+    ),null,2);
 }
 $count = $modx->getCount('rptBanMatch',$c);
 $c->select($modx->getSelectColumns('rptBanMatch','rptBanMatch'));
@@ -57,12 +63,32 @@ if ($isCombo || $isLimit) {
 }
 $matches = $modx->getCollection('rptBanMatch', $c);
 
+function rptGetArrayAsUL($array = array()) {
+    $self = __FUNCTION__;
+    if (empty($array)) return '';
+    $out = '<ul>'."\n";
+    foreach ($array as $key => $elem) {
+        $out .= '<li>';
+        if (is_array($elem)) {
+            $out .= $self($elem);
+        } else {
+            $out .= '<b>'.$key.'</b>: '.$elem;
+        }
+        $out .= '</li>'."\n";
+    }
+    $out .= '</ul>'."\n";
+    return $out;
+}
 
 $list = array();
 foreach ($matches as $match) {
     $matchArray = $match->toArray();
     $matchArray['createdon'] = strftime('%b %d, %Y %I:%M %p',strtotime($match->get('createdon')));
     $matchArray['pagetitle'] = !empty($matchArray['pagetitle']) ? $matchArray['pagetitle'].' ('.$matchArray['resource'].')' : '';
+
+    if (!empty($matchArray['data'])) {
+        $matchArray['data_formatted'] = rptGetArrayAsUL($matchArray['data']);
+    }
     
     $list[]= $matchArray;
 }

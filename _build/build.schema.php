@@ -75,9 +75,6 @@ $generator->classTemplate= <<<EOD
  * [+phpdoc-package+]
  */
 class [+class+] extends [+extends+] {
-    function [+class+](& \$xpdo) {
-        \$this->__construct(\$xpdo);
-    }
     function __construct(& \$xpdo) {
         parent :: __construct(\$xpdo);
     }
@@ -91,9 +88,6 @@ $generator->platformTemplate= <<<EOD
  */
 require_once (strtr(realpath(dirname(dirname(__FILE__))), '\\\\', '/') . '/[+class-lowercase+].class.php');
 class [+class+]_[+platform+] extends [+class+] {
-    function [+class+]_[+platform+](& \$xpdo) {
-        \$this->__construct(\$xpdo);
-    }
     function __construct(& \$xpdo) {
         parent :: __construct(\$xpdo);
     }

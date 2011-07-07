@@ -7,6 +7,7 @@ $xpdo_meta_map['rptBanMatch']= array (
   'table' => 'rampart_ban_matches',
   'fields' => 
   array (
+    'ban' => 0,
     'username' => '',
     'username_match' => '',
     'hostname' => NULL,
@@ -18,9 +19,22 @@ $xpdo_meta_map['rptBanMatch']= array (
     'useragent' => NULL,
     'createdon' => NULL,
     'resource' => 0,
+    'notes' => NULL,
+    'data' => NULL,
+    'service' => 'manual',
+    'reason' => '',
   ),
   'fieldMeta' => 
   array (
+    'ban' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'phptype' => 'integer',
+      'null' => false,
+      'default' => 0,
+      'index' => 'index',
+    ),
     'username' => 
     array (
       'dbtype' => 'varchar',
@@ -97,6 +111,33 @@ $xpdo_meta_map['rptBanMatch']= array (
       'default' => 0,
       'index' => 'index',
     ),
+    'notes' => 
+    array (
+      'dbtype' => 'text',
+      'phptype' => 'string',
+      'null' => true,
+    ),
+    'data' => 
+    array (
+      'dbtype' => 'mediumtext',
+      'phptype' => 'json',
+    ),
+    'service' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '100',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => 'manual',
+    ),
+    'reason' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
+    ),
   ),
   'indexes' => 
   array (
@@ -132,6 +173,22 @@ $xpdo_meta_map['rptBanMatch']= array (
         ),
       ),
     ),
+    'ban' => 
+    array (
+      'alias' => 'ban',
+      'primary' => false,
+      'unique' => false,
+      'type' => 'BTREE',
+      'columns' => 
+      array (
+        'ban' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
+        ),
+      ),
+    ),
   ),
   'aggregates' => 
   array (
@@ -143,12 +200,20 @@ $xpdo_meta_map['rptBanMatch']= array (
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
+    'Ban' => 
+    array (
+      'class' => 'rptBan',
+      'local' => 'ban',
+      'foreign' => 'id',
+      'cardinality' => 'one',
+      'owner' => 'foreign',
+    ),
   ),
   'composites' => 
   array (
-    'Bans' => 
+    'Fields' => 
     array (
-      'class' => 'rptBanMatchBan',
+      'class' => 'rptBanMatchField',
       'local' => 'id',
       'foreign' => 'ban_match',
       'cardinality' => 'many',

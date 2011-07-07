@@ -51,11 +51,11 @@ class RampartHoneyPot {
         
         $expires = $this->modx->getOption('rampart.honeypot.ban_expiration',$this->config,30); /* # of days to ban */
         if (!empty($this->values['comment_spammer'])) {
-            $this->rampart->addBan($ip,'HoneyPot: Comment Spammer',$expires,$this->values['last_activity_time'],'projecthoneypot',$this->values);
+            //$this->rampart->addBan($ip,'HoneyPot: Comment Spammer',$expires,$this->values['last_activity_time'],'projecthoneypot',$this->values);
             $passed = false;
         }
         if (!empty($this->values['harvester'])) {
-            $this->rampart->addBan($ip,'HoneyPot: Harvester',$expires,$this->values['last_activity_time'],'projecthoneypot',$this->values);
+            //$this->rampart->addBan($ip,'HoneyPot: Harvester',$expires,$this->values['last_activity_time'],'projecthoneypot',$this->values);
             $passed = false;
         }
         return $passed;
@@ -171,6 +171,7 @@ class RampartHoneyPot {
     protected function _getIp() {
         $ip = $_SERVER['REMOTE_ADDR'];
         if ($ip == '::1') $ip = '127.0.0.1';
+        $ip = '78.41.240.125';
         return $ip;
     }
 }

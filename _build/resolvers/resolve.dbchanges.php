@@ -41,11 +41,25 @@ if ($object->xpdo) {
                 $manager->addField('rptBan','last_activity');
                 $manager->addField('rptBan','data');
                 $manager->addField('rptBan','service');
+
+                $manager->addField('rptBanMatch','ban');
+                $manager->addIndex('rptBanMatch','ban');
+                $manager->addField('rptBanMatch','notes');
+                $manager->addField('rptBanMatch','data');
+                $manager->addField('rptBanMatch','service');
+                $manager->addField('rptBanMatch','reason');
+
             } else {
                 $modx->exec("ALTER TABLE {$modx->getTableName('rptBan')} ADD `ip` VARCHAR(100) NOT NULL default '' AFTER `reason`");
                 $modx->exec("ALTER TABLE {$modx->getTableName('rptBan')} ADD `last_activity` DATETIME AFTER `active`");
                 $modx->exec("ALTER TABLE {$modx->getTableName('rptBan')} ADD `data` MEDIUMTEXT");
                 $modx->exec("ALTER TABLE {$modx->getTableName('rptBan')} ADD `service` VARCHAR(100) NOT NULL default 'manual' AFTER `data`");
+
+                $modx->exec("ALTER TABLE {$modx->getTableName('rptBanMatch')} ADD INDEX `ban` (`ban`)");
+                $modx->exec("ALTER TABLE {$modx->getTableName('rptBanMatch')} ADD `notes` MEDIUMTEXT");
+                $modx->exec("ALTER TABLE {$modx->getTableName('rptBanMatch')} ADD `data` MEDIUMTEXT");
+                $modx->exec("ALTER TABLE {$modx->getTableName('rptBanMatch')} ADD `service` VARCHAR(100) NOT NULL default 'manual' AFTER `data`");
+                $modx->exec("ALTER TABLE {$modx->getTableName('rptBanMatch')} ADD `reason` VARCHAR(255) NOT NULL default '' AFTER `service`");
             }
             break;
     }

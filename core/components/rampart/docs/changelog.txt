@@ -1,5 +1,10 @@
 Changelog for Rampart.
 
+Rampart 1.2.0
+==============
+- Refactor architecture to allow for better ban matching storage, easier integration with other services, more scalability
+- Add new system setting, rampart.honeypot.fullwall_enabled, that when on prevents honeypot comment spammers/harvesters from even accessing site
+
 Rampart 1.1.0
 ==============
 - [#5126] Store responses and source service that created each ban

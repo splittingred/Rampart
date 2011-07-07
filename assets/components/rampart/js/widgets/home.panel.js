@@ -41,17 +41,6 @@ Rampart.panel.Home = function(config) {
                     ,preventRender: true
                 }]
             },{
-                title: _('rampart.ban_matches')
-                ,defaults: { autoHeight: true }
-                ,items: [{
-                    html: '<p>'+_('rampart.ban_matches.intro_msg')+'</p>'
-                    ,border: false
-                    ,bodyStyle: 'padding: 10px'
-                },{
-                    xtype: 'rpt-grid-ban-matches'
-                    ,preventRender: true
-                }]
-            },{
                 title: _('rampart.whitelist')
                 ,defaults: { autoHeight: true }
                 ,items: [{
@@ -234,18 +223,7 @@ Ext.extend(Rampart.grid.Bans,MODx.grid.Grid,{
         this.addBanWindow.show(e.target);
     }
     ,updateBan: function(btn,e) {
-        if (!this.updateBanWindow) {
-            this.updateBanWindow = MODx.load({
-                xtype: 'rpt-window-ban-update'
-                ,record: this.menu.record
-                ,listeners: {
-                    'success': {fn:this.refresh,scope:this}
-                }
-            });
-        }
-        this.updateBanWindow.reset();
-        this.updateBanWindow.setValues(this.menu.record);
-        this.updateBanWindow.show(e.target);
+        location.href = '?a='+MODx.request.a+'&action=ban/update&id='+this.menu.record.id;
     }
     ,duplicateBan: function(btn,e) {
         MODx.Ajax.request({
@@ -481,71 +459,3 @@ Rampart.window.CreateBan = function(config) {
 };
 Ext.extend(Rampart.window.CreateBan,MODx.Window);
 Ext.reg('rpt-window-ban-create',Rampart.window.CreateBan);
-
-
-Rampart.window.UpdateBan = function(config) {
-    config = config || {};
-    Ext.applyIf(config,{
-        title: _('rampart.ban_update')
-        ,height: 150
-        ,width: 500
-        ,url: Rampart.config.connectorUrl
-        ,action: 'mgr/ban/update'
-        ,fields: [{
-            name: 'id'
-            ,xtype: 'hidden'
-        },{
-            fieldLabel: _('rampart.reason')
-            ,description: _('rampart.reason_desc')
-            ,name: 'reason'
-            ,xtype: 'textarea'
-            ,allowBlank: true
-            ,anchor: '90%'
-        },{
-            fieldLabel: _('rampart.ip_range')
-            ,description: _('rampart.ip_range_desc')
-            ,name: 'ip'
-            ,xtype: 'textfield'
-            ,allowBlank: true
-            ,anchor: '90%'
-        },{
-            fieldLabel: _('rampart.hostname')
-            ,description: _('rampart.hostname_desc')
-            ,name: 'hostname'
-            ,xtype: 'textfield'
-            ,allowBlank: true
-            ,anchor: '90%'
-        },{
-            fieldLabel: _('rampart.email')
-            ,description: _('rampart.email_desc')
-            ,name: 'email'
-            ,xtype: 'textfield'
-            ,allowBlank: true
-            ,anchor: '90%'
-        },{
-            fieldLabel: _('rampart.username')
-            ,description: _('rampart.username_desc')
-            ,name: 'username'
-            ,xtype: 'textfield'
-            ,allowBlank: true
-            ,anchor: '90%'
-        },{
-            fieldLabel: _('rampart.expireson')
-            ,description: _('rampart.expireson_desc')
-            ,name: 'expireson'
-            ,xtype: 'xdatetime'
-            ,allowBlank: true
-            ,anchor: '90%'
-        },{
-            fieldLabel: _('rampart.notes')
-            ,description: _('rampart.notes_desc')
-            ,name: 'notes'
-            ,xtype: 'textarea'
-            ,allowBlank: true
-            ,anchor: '90%'
-        }]
-    });
-    Rampart.window.UpdateBan.superclass.constructor.call(this,config);
-};
-Ext.extend(Rampart.window.UpdateBan,MODx.Window);
-Ext.reg('rpt-window-ban-update',Rampart.window.UpdateBan);

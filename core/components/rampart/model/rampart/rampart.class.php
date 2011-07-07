@@ -27,17 +27,28 @@
 class Rampart {
     const REASON = 'reason';
     const STATUS = 'status';
+    const DESCRIPTION = 'description';
     const IP = 'ip';
     const HOSTNAME = 'hostname';
     const EMAIL = 'email';
     const USERNAME = 'username';
     const USER_AGENT = 'user_agent';
+    const EXPIRATION = 'expiration';
+    const SERVICE = 'service';
+    const NOTES = '';
+    const BAN = 'ban';
     const STATUS_OK = 'ok';
     const STATUS_BANNED = 'banned';
     const STATUS_MODERATED = 'moderated';
+    const MATCH_IP = 'match_ip';
+    const MATCH_USERNAME = 'match_username';
+    const MATCH_HOSTNAME = 'match_hostname';
+    const MATCH_EMAIL = 'match_email';
+    const MATCH_FIELDS = 'match_fields';
 
     public $request;
     public $modx;
+    public $honey;
     public $config = array();
 
     function __construct(modX &$modx,array $config = array()) {
@@ -171,6 +182,15 @@ class Rampart {
 
             /* Run StopForumSpam checks */
             $result = $this->runStopForumSpamChecks($result);
+
+            /* Run ProjectHoneyPot checks */
+            if ($this->modx->getOption('rampart.honeypot.enabled',null,false)) {
+                $result = $this->runProjectHoneyPotChecks($result);
+            }
+
+            if (!empty($result[Rampart::STATUS]) && $result[Rampart::STATUS] == Rampart::STATUS_BANNED) {
+                $this->addBan($result);
+            }
         }
         return $result;
     }
@@ -226,54 +246,24 @@ class Rampart {
 
         $bans = $this->modx->getCollection('rptBan',$c);
         if (count($bans)) {
-            $matches = array();
-            $fieldMatches = array();
             foreach ($bans as $ban) {
+                $result[Rampart::BAN] = $ban->get('id');
+                $result[Rampart::MATCH_FIELDS] = array();
+
                 if ($ban->get('ip_match')) {
-                    $fieldMatches['ip'] = $ban->get('ip');
-                    $matches[$ban->get('id')] = 'ip';
+                    $result[Rampart::MATCH_FIELDS]['ip'] = $result[Rampart::IP];
                 }
                 if ($ban->get('username_match')) {
-                    $fieldMatches['username'] = $ban->get('username');
-                    $matches[$ban->get('id')] = 'username';
+                    $result[Rampart::MATCH_FIELDS]['username'] = $result[Rampart::USERNAME];
                 }
                 if ($ban->get('hostname_match')) {
-                    $fieldMatches['hostname'] = $ban->get('hostname');
-                    $matches[$ban->get('id')] = 'hostname';
+                    $result[Rampart::MATCH_FIELDS]['hostname'] = $result[Rampart::HOSTNAME];
                 }
                 if ($ban->get('email_match')) {
-                    $fieldMatches['email'] = $ban->get('email');
-                    $matches[$ban->get('id')] = 'email';
-                }
-
-                $ban->set('matches',$ban->get('matches')+1);
-                $ban->save();
-            }
-
-            $match = $this->modx->newObject('rptBanMatch');
-            $match->set('ip',$result[Rampart::IP]);
-            $match->set('hostname',$result[Rampart::HOSTNAME]);
-            $match->set('username',$result[Rampart::USERNAME]);
-            $match->set('email',$result[Rampart::EMAIL]);
-            $match->set('useragent',$result[Rampart::USER_AGENT]);
-
-            if (!empty($fieldMatches['ip'])) $match->set('ip_match',$fieldMatches['ip']);
-            if (!empty($fieldMatches['username'])) $match->set('username_match',$fieldMatches['username']);
-            if (!empty($fieldMatches['hostname'])) $match->set('hostname_match',$fieldMatches['hostname']);
-            if (!empty($fieldMatches['email'])) $match->set('email_match',$fieldMatches['email']);
-
-            $match->set('resource',$this->modx->resource->get('id'));
-            $match->set('createdon',time());
-
-            if ($match->save()) {
-                foreach ($matches as $banId => $field) {
-                    $bmb = $this->modx->newObject('rptBanMatchBan');
-                    $bmb->set('ban',$banId);
-                    $bmb->set('ban_match',$match->get('id'));
-                    $bmb->set('field',$field);
-                    $bmb->save();
+                    $result[Rampart::MATCH_FIELDS]['email'] = $result[Rampart::EMAIL];
                 }
             }
+            $result[Rampart::REASON] = 'Manual Ban Match';
             $result[Rampart::STATUS] = Rampart::STATUS_BANNED;
         }
         return $result;
@@ -312,10 +302,11 @@ class Rampart {
                             $ips = $sfspam->responseXml;
                             $frequency = (int)$ips->frequency;
                             if ($frequency >= $threshold) {
-                                $now = time();
                                 $result[Rampart::STATUS] = Rampart::STATUS_BANNED;
                                 $result[Rampart::REASON] = 'sfsip';
-                                $this->addBan($result[Rampart::IP],'StopForumSpam IP Ban',$expiration,$now,'stopforumspam',$result);
+                                $result[Rampart::DESCRIPTION] = 'StopForumSpam IP Ban';
+                                $result[Rampart::EXPIRATION] = $expiration;
+                                $result[Rampart::SERVICE] = 'stopforumspam';
                             }
                         }
                     }
@@ -323,6 +314,35 @@ class Rampart {
             }
         } else {
             $this->modx->log(modX::LOG_LEVEL_ERROR,'[Rampart] Could not load StopForumSpam class.');
+        }
+        return $result;
+    }
+
+    /**
+     * Run checks for Project Honey Pot
+     * @param array $result
+     * @return array
+     */
+    public function runProjectHoneyPotChecks($result) {
+        if (empty($this->honey)) {
+            if (!$this->modx->loadClass('projecthoneypot.RampartHoneyPot',$this->config['modelPath'],true,true)) {
+                $this->modx->log(modX::LOG_LEVEL_ERROR,'[Rampart] Could not load RampartHoneyPot class from: '.$this->config['modelPath']);
+                return $result;
+            }
+            $this->honey = new RampartHoneyPot($this);
+        }
+        if (!$this->honey->check()) {
+            $result['response'] = $this->honey->values;
+            $result[Rampart::STATUS] = Rampart::STATUS_BANNED;
+            $result[Rampart::SERVICE] = 'projecthoneypot';
+            $result[Rampart::REASON] = 'Suspicious';
+            $result[Rampart::MATCH_FIELDS] = array(Rampart::MATCH_IP => $result[Rampart::IP]);
+            if (!empty($this->honey->values['comment_spammer'])) {
+                $result[Rampart::REASON] = 'HoneyPot: Comment Spammer';
+            } elseif (!empty($this->honey->values['harvester'])) {
+                $result[Rampart::REASON] = 'HoneyPot: Harvester';
+            }
+            $result[Rampart::EXPIRATION] = $this->modx->getOption('rampart.honeypot.ban_expiration',$this->config,30);
         }
         return $result;
     }
@@ -366,31 +386,31 @@ class Rampart {
     /**
      * Add a ban to the banlist
      *
-     * @param string $ip
-     * @param string $reason
-     * @param int $expires
-     * @param string $lastActive
-     * @param string $service
-     * @param array $data
+     * @param array $result
      * @return boolean
      *
      */
-    public function addBan($ip,$reason,$expires = 30,$lastActive = null,$service = 'manual',array $data = array()) {
-        $future = time() + ($expires * 24 * 60 * 60);
-        if (empty($lastActive)) $lastActive = time();
+    public function addBan(array $result = array()) {
+        if (empty($result[Rampart::EXPIRATION])) {
+            $result[Rampart::EXPIRATION] = 30;
+        }
 
-        $ban = $this->modx->getObject('rptBan',array(
-            'ip' => $ip,
-        ));
-        if ($ban) {
-            $matches = (int)$ban->get('matches') + 1;
-            $ban->set('matches',$matches);
-        } else {
+        /* if specifying an existing ban */
+        if (!empty($result[Rampart::BAN])) {
+            $ban = $this->modx->getObject('rptBan',$result[Rampart::BAN]);
+        }
+        /* otherwise we'll try and grab it from the IP */
+        if (empty($ban)) {
+            $ban = $this->modx->getObject('rptBan',array(
+                'ip' => $result[Rampart::IP],
+            ));
+        }
+        /* and finally, if no matches, create a new ban */
+        if (empty($ban)) {
             $ban = $this->modx->newObject('rptBan');
-            $ban->set('reason',$reason);
             $ban->set('createdon',time());
             $ban->set('active',true);
-            $boomIp = explode('.',$ip);
+            $boomIp = explode('.',$result[Rampart::IP]);
             $ban->set('ip_low1',$boomIp[0]);
             $ban->set('ip_high1',$boomIp[0]);
             $ban->set('ip_low2',$boomIp[1]);
@@ -400,13 +420,63 @@ class Rampart {
             $ban->set('ip_low4',$boomIp[3]);
             $ban->set('ip_high4',$boomIp[3]);
             $ban->set('matches',1);
+            $future = time() + ($result[Rampart::EXPIRATION] * 24 * 60 * 60);
+            $ban->set('expireson',$future);
+        } else {
+            $matches = (int)$ban->get('matches') + 1;
+            $ban->set('matches',$matches);
         }
-        $ban->set('ip',$ip);
-        $ban->set('expireson',$future);
+
+        /* now update IP, last active, store latest data, etc */
+        if (!empty($result[Rampart::REASON])) {
+            $ban->set('reason',$result[Rampart::REASON]);
+        }
+        $ban->set('ip',$result[Rampart::IP]);
+        $lastActive = time();
         $ban->set('last_activity',$lastActive);
-        $ban->set('data',$data);
-        $ban->set('service',$service);
-        return $ban->save();
+        $ban->set('data',$result);
+        $ban->set('service',!empty($result[Rampart::SERVICE]) ? $result[Rampart::SERVICE] : 'manual');
+        if ($ban->save()) {
+            /* now create match record */
+            $match = $this->modx->newObject('rptBanMatch');
+            $match->set('ban',$ban->get('id'));
+            $match->set('ip',$result[Rampart::IP]);
+            $match->set('hostname',!empty($result[Rampart::HOSTNAME]) ? $result[Rampart::HOSTNAME] : '');
+
+            $username = !empty($result[Rampart::USERNAME]) ? $result[Rampart::USERNAME] : $this->modx->user->get('username');
+            $match->set('username',$username);
+            $match->set('email',!empty($result[Rampart::EMAIL]) ? $result[Rampart::EMAIL] : '');
+            $match->set('useragent',!empty($result[Rampart::USER_AGENT]) ? $result[Rampart::USER_AGENT] : '');
+
+            if (!empty($result[Rampart::MATCH_FIELDS])) {
+                $fields = is_array($result[Rampart::MATCH_FIELDS]) ? $result[Rampart::MATCH_FIELDS] : explode(',',$result[Rampart::MATCH_FIELDS]);
+            } else {
+                $fields = array();
+            }
+            if (!empty($fields['ip'])) { $match->set('ip_match',$fields['ip']); }
+            if (!empty($fields['username'])) { $match->set('username_match',$fields['username']); }
+            if (!empty($fields['hostname'])) { $match->set('hostname_match',$fields['hostname']); }
+            if (!empty($fields['email'])) { $match->set('email_match',$fields['email']); }
+
+            $match->set('resource',$this->modx->resource->get('id'));
+            $match->set('data',$result);
+            $match->set('service',!empty($result[Rampart::SERVICE]) ? $result[Rampart::SERVICE] : 'manual');
+            $match->set('notes',!empty($result[Rampart::NOTES]) ? $result[Rampart::NOTES] : '');
+            $match->set('createdon',time());
+            $match->set('reason',!empty($result[Rampart::REASON]) ? $result[Rampart::REASON] : '');
+
+            if ($match->save()) {
+                /* if any field matches, store here */
+                foreach ($fields as $field => $value) {
+                    $bmf = $this->modx->newObject('rptBanMatchField');
+                    $bmf->set('ban',$ban->get('id'));
+                    $bmf->set('ban_match',$match->get('id'));
+                    $bmf->set('field',$field);
+                    $bmf->save();
+                }
+            }
+        }
+        return true;
     }
 
 

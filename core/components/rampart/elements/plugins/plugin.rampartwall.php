@@ -29,7 +29,7 @@ $rampart = $modx->getService('rampart','Rampart',$modelPath.'rampart/');
 
 switch ($modx->event->name) {
     case 'OnWebPageInit':
-        if ($modx->getOption('rampart.honeypot.enabled',null,false)) {
+        if ($modx->getOption('rampart.honeypot.enabled',null,false) && $modx->getOption('rampart.honeypot.fullwall_enabled',null,false)) {
             /* handle ProjectHoneyPot DNS blacklist integration */
             if ($modx->loadClass('projecthoneypot.RampartHoneyPot',$rampart->config['modelPath'],true,true)) {
                 $honey = new RampartHoneyPot($rampart);

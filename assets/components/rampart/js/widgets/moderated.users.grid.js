@@ -5,10 +5,11 @@ Rampart.grid.ModeratedUsers = function(config) {
     Ext.applyIf(config,{
         url: Rampart.config.connector_url
         ,baseParams: { action: 'mgr/flagged/getList', status: '' }
+        ,id: 'rpt-grid-moderated-users'
         ,save_action: 'mgr/flagged/updateFromGrid'
         ,fields: ['id','username','fullname','email','ip','hostname','useragent','flaggedfor','flaggedon']
         ,paging: true
-        ,autosave: true
+        ,autosave: false
         ,remoteSort: true
         ,sm: this.sm
         ,columns: [this.sm,{
@@ -26,26 +27,34 @@ Rampart.grid.ModeratedUsers = function(config) {
             ,dataIndex: 'email'
             ,sortable: true
             ,width: 80
+            ,editable: true
+            ,editor: { xtype: 'textfield', allowBlank: false }
         },{
             header: _('rampart.ip')
             ,dataIndex: 'ip'
             ,sortable: true
             ,width: 60
+            ,editable: true
+            ,editor: { xtype: 'textfield', allowBlank: false }
         },{
             header: _('rampart.hostname')
             ,dataIndex: 'hostname'
             ,sortable: true
             ,width: 100
+            ,hidden: true
         },{
             header: _('rampart.useragent')
             ,dataIndex: 'useragent'
             ,sortable: true
             ,width: 120
+            ,editable: true
+            ,editor: { xtype: 'textfield', allowBlank: false }
         },{
             header: _('rampart.flaggedfor')
             ,dataIndex: 'flaggedfor'
             ,sortable: true
             ,width: 80
+            ,renderer: this.renderFlaggedFor
         },{
             header: _('rampart.flaggedon')
             ,dataIndex: 'flaggedon'
@@ -121,6 +130,15 @@ Ext.extend(Rampart.grid.ModeratedUsers,MODx.grid.Grid,{
         this.getEl().addKeyListener(Ext.EventObject.ENTER,function() {
             this.fireEvent('change');
         },this);
+    }
+    ,renderFlaggedFor: function(v,md,rec,ri,ci,s) {
+        return v;//'<a href="#" onclick="Ext.getCmp(\'rpt-grid-moderated-users\').seeResponse('+ri+');">'+v+'</a>';
+    }
+    ,seeResponse: function(ri) {
+        var g = Ext.getCmp('rpt-grid-moderated-users');
+        var s = g.getStore();
+        var rec = s.getAt(ri);
+        var data = rec.data;
     }
     ,clearFilter: function() {
     	var s = this.getStore();

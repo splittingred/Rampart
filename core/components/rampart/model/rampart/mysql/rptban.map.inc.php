@@ -293,7 +293,15 @@ $xpdo_meta_map['rptBan']= array (
   array (
     'Matches' => 
     array (
-      'class' => 'rptBanMatchBan',
+      'class' => 'rptBanMatch',
+      'local' => 'id',
+      'foreign' => 'ban',
+      'cardinality' => 'many',
+      'owner' => 'local',
+    ),
+    'Fields' => 
+    array (
+      'class' => 'rptBanMatchField',
       'local' => 'id',
       'foreign' => 'ban',
       'cardinality' => 'many',
