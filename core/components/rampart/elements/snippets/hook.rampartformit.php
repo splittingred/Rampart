@@ -26,5 +26,4 @@ if ($response[Rampart::STATUS] == Rampart::STATUS_BANNED) {
     $hook->addError($rptErrorField,$rptSpammerErrorMessage);
     return false;
 }
-die('passed');
 return true;
