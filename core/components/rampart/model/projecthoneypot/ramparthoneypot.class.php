@@ -171,7 +171,6 @@ class RampartHoneyPot {
     protected function _getIp() {
         $ip = $_SERVER['REMOTE_ADDR'];
         if ($ip == '::1') $ip = '127.0.0.1';
-        $ip = '78.41.240.125';
         return $ip;
     }
 }
