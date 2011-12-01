@@ -23,14 +23,15 @@
  * @package rampart
  * @subpackage processors
  */
-if (empty($scriptProperties['id'])) {
-    return $modx->error->failure($modx->lexicon('rampart.ban_err_ns'));
-}
-$ban = $modx->getObject('rptBan',$scriptProperties['id']);
-if (empty($ban)) { return $modx->error->failure($modx->lexicon('rampart.ban_err_nf')); }
+class RampartBanCreateProcessor extends modObjectCreateProcessor {
+    public $classKey = 'rptBan';
+    public $objectType = 'rampart.ban';
+    public $languageTopics = array('rampart:default');
 
-if ($ban->remove() === false) {
-    return $modx->error->failure($modx->lexicon('rampart.ban_err_remove'));
+    public function beforeSave() {
+        $this->object->set('createdon',strftime('%Y-%m-%d %H:%M:%S'));
+        $this->object->set('createdby',$this->modx->user->get('id'));
+        return parent::beforeSave();
+    }
 }
-
-return $modx->error->success('',$ban);
+return 'RampartBanCreateProcessor';

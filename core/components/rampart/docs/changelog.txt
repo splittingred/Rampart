@@ -1,7 +1,8 @@
 Changelog for Rampart.
 
-Rampart 1.2.1
+Rampart 1.3.0
 ==============
+- Improved to MODX 2.2 styling and functionality
 - [#5958] Fix debug call issue
 
 Rampart 1.2.0

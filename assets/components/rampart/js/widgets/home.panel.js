@@ -2,7 +2,7 @@ Rampart.panel.Home = function(config) {
     config = config || {};
     Ext.apply(config,{
         border: false
-        ,baseCls: 'modx-formpanel'
+        ,baseCls: 'modx-formpanel container'
         ,items: [{
             html: '<h2>'+'Rampart'+'</h2>'
             ,border: false
@@ -398,61 +398,129 @@ Ext.reg('rpt-grid-bans',Rampart.grid.Bans);
 
 Rampart.window.CreateBan = function(config) {
     config = config || {};
+    this.ident = config.ident || 'rpt-cban-'+Ext.id();
     Ext.applyIf(config,{
         title: _('rampart.ban_add_new')
         ,height: 150
-        ,width: 500
+        ,width: 600
         ,url: Rampart.config.connectorUrl
         ,action: 'mgr/ban/create'
         ,fields: [{
-            fieldLabel: _('rampart.reason')
-            ,description: _('rampart.reason_desc')
-            ,name: 'reason'
-            ,xtype: 'textarea'
-            ,allowBlank: true
-            ,anchor: '90%'
-        },{
-            fieldLabel: _('rampart.ip_range')
-            ,description: _('rampart.ip_range_desc')
-            ,name: 'ip'
-            ,xtype: 'textfield'
-            ,allowBlank: true
-            ,anchor: '90%'
-        },{
-            fieldLabel: _('rampart.hostname')
-            ,description: _('rampart.hostname_desc')
-            ,name: 'hostname'
-            ,xtype: 'textfield'
-            ,allowBlank: true
-            ,anchor: '90%'
-        },{
-            fieldLabel: _('rampart.email')
-            ,description: _('rampart.email_desc')
-            ,name: 'email'
-            ,xtype: 'textfield'
-            ,allowBlank: true
-            ,anchor: '90%'
-        },{
-            fieldLabel: _('rampart.username')
-            ,description: _('rampart.username_desc')
-            ,name: 'username'
-            ,xtype: 'textfield'
-            ,allowBlank: true
-            ,anchor: '90%'
-        },{
-            fieldLabel: _('rampart.expireson')
-            ,description: _('rampart.expireson_desc')
-            ,name: 'expireson'
-            ,xtype: 'xdatetime'
-            ,allowBlank: true
-            ,anchor: '90%'
-        },{
-            fieldLabel: _('rampart.notes')
-            ,description: _('rampart.notes_desc')
-            ,name: 'notes'
-            ,xtype: 'textarea'
-            ,allowBlank: true
-            ,anchor: '90%'
+            layout: 'column'
+            ,border: false
+            ,defaults: {
+                layout: 'form'
+                ,labelAlign: 'top'
+                ,anchor: '100%'
+                ,border: false
+            }
+            ,items: [{
+                columnWidth: .5
+                ,cls: 'main-content'
+                ,items: [{
+                    fieldLabel: _('rampart.reason')
+                    ,description: MODx.expandHelp ? '' : _('rampart.reason_desc')
+                    ,name: 'reason'
+                    ,id: this.ident+'-reason'
+                    ,xtype: 'textarea'
+                    ,allowBlank: true
+                    ,anchor: '100%'
+                },{
+                    xtype: MODx.expandHelp ? 'label' : 'hidden'
+                    ,forId: this.ident+'-reason'
+                    ,html: _('rampart.reason_desc')
+                    ,cls: 'desc-under'
+
+                },{
+                    fieldLabel: _('rampart.email')
+                    ,description: MODx.expandHelp ? '' : _('rampart.email_desc')
+                    ,name: 'email'
+                    ,id: this.ident+'-email'
+                    ,xtype: 'textfield'
+                    ,allowBlank: true
+                    ,anchor: '100%'
+                },{
+                    xtype: MODx.expandHelp ? 'label' : 'hidden'
+                    ,forId: this.ident+'-email'
+                    ,html: _('rampart.email_desc')
+                    ,cls: 'desc-under'
+
+                },{
+                    fieldLabel: _('rampart.username')
+                    ,description: MODx.expandHelp ? '' : _('rampart.username_desc')
+                    ,name: 'username'
+                    ,id: this.ident+'-username'
+                    ,xtype: 'textfield'
+                    ,allowBlank: true
+                    ,anchor: '100%'
+                },{
+                    xtype: MODx.expandHelp ? 'label' : 'hidden'
+                    ,forId: this.ident+'-username'
+                    ,html: _('rampart.username_desc')
+                    ,cls: 'desc-under'
+
+                },{
+                    fieldLabel: _('rampart.expireson')
+                    ,description: MODx.expandHelp ? '' : _('rampart.expireson_desc')
+                    ,name: 'expireson'
+                    ,id: this.ident+'-expireson'
+                    ,xtype: 'xdatetime'
+                    ,allowBlank: true
+                    ,anchor: '98%'
+                },{
+                    xtype: MODx.expandHelp ? 'label' : 'hidden'
+                    ,forId: this.ident+'-expireson'
+                    ,html: _('rampart.expireson_desc')
+                    ,cls: 'desc-under'
+
+                }]
+            },{
+                columnWidth: .5
+                ,cls: 'main-content'
+                ,items: [{
+                    fieldLabel: _('rampart.ip_range')
+                    ,description: MODx.expandHelp ? '' : _('rampart.ip_range_desc')
+                    ,name: 'ip'
+                    ,id: this.ident+'-ip-range'
+                    ,xtype: 'textfield'
+                    ,allowBlank: true
+                    ,anchor: '100%'
+                },{
+                    xtype: MODx.expandHelp ? 'label' : 'hidden'
+                    ,forId: this.ident+'-ip-range'
+                    ,html: _('rampart.ip_range_desc')
+                    ,cls: 'desc-under'
+
+                },{
+                    fieldLabel: _('rampart.hostname')
+                    ,description: MODx.expandHelp ? '' : _('rampart.hostname_desc')
+                    ,name: 'hostname'
+                    ,id: this.ident+'-hostname'
+                    ,xtype: 'textfield'
+                    ,allowBlank: true
+                    ,anchor: '100%'
+                },{
+                    xtype: MODx.expandHelp ? 'label' : 'hidden'
+                    ,forId: this.ident+'-hostname'
+                    ,html: _('rampart.hostname_desc')
+                    ,cls: 'desc-under'
+
+                },{
+                    fieldLabel: _('rampart.notes')
+                    ,description: MODx.expandHelp ? '' : _('rampart.notes_desc')
+                    ,name: 'notes'
+                    ,id: this.ident+'-notes'
+                    ,xtype: 'textarea'
+                    ,allowBlank: true
+                    ,anchor: '100%'
+                },{
+                    xtype: MODx.expandHelp ? 'label' : 'hidden'
+                    ,forId: this.ident+'-notes'
+                    ,html: _('rampart.notes_desc')
+                    ,cls: 'desc-under'
+
+                }]
+            }]
         }]
     });
     Rampart.window.CreateBan.superclass.constructor.call(this,config);

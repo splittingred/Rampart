@@ -23,13 +23,9 @@
  * @package rampart
  * @subpackage processors
  */
-$wl = $modx->newObject('rptWhiteList');
-$wl->fromArray($scriptProperties);
-$wl->set('createdon',strftime('%Y-%m-%d %H:%M:%S'));
-$wl->set('createdby',$modx->user->get('id'));
-
-if ($wl->save() === false) {
-    return $modx->error->failure($modx->lexicon('rampart.whitelist_err_save'));
+class RampartWhiteListRemoveProcessor extends modObjectRemoveProcessor {
+    public $classKey = 'rptWhiteList';
+    public $objectType = 'rampart.whitelist';
+    public $languageTopics = array('rampart:default');
 }
-
-return $modx->error->success('',$wl);
+return 'RampartWhiteListRemoveProcessor';

@@ -1,8 +1,8 @@
 Rampart.panel.Ban = function(config) {
     config = config || {};
     Ext.apply(config,{
-        border: false
-        ,id: 'rampart-panel-ban'
+        id: 'rampart-panel-ban'
+        ,cls: 'container form-with-labels'
         ,url: Rampart.config.connector_url
         ,baseParams: {}
         ,items: [{
@@ -12,83 +12,153 @@ Rampart.panel.Ban = function(config) {
             ,cls: 'modx-page-header'
         },MODx.getPageStructure([{
             title: _('rampart.ban_info')
-            ,bodyStyle: 'padding: 15px;'
-            ,defaults: { border: false ,msgTarget: 'side' }
-            ,layout: 'form'
-            ,id: 'rampart-ban-form'
-            ,labelWidth: 150
+            ,xtype: 'panel'
+            ,defaults: { border: false }
             ,items: [{
                 html: '<p>'+_('rampart.ban.intro_msg')+'</p>'
                 ,id: 'rampart-ban-msg'
-                ,border: false
+                ,bodyCssClass: 'panel-desc'
             },{
-                name: 'id'
-                ,xtype: 'hidden'
-            },{
-                fieldLabel: _('rampart.reason')
-                ,description: _('rampart.reason_desc')
-                ,name: 'reason'
-                ,xtype: 'textarea'
-                ,allowBlank: true
-                ,anchor: '90%'
-            },{
-                fieldLabel: _('rampart.ip_range')
-                ,description: _('rampart.ip_range_desc')
-                ,name: 'ip'
-                ,xtype: 'textfield'
-                ,allowBlank: true
-                ,anchor: '90%'
-            },{
-                fieldLabel: _('rampart.hostname')
-                ,description: _('rampart.hostname_desc')
-                ,name: 'hostname'
-                ,xtype: 'textfield'
-                ,allowBlank: true
-                ,anchor: '90%'
-            },{
-                fieldLabel: _('rampart.email')
-                ,description: _('rampart.email_desc')
-                ,name: 'email'
-                ,xtype: 'textfield'
-                ,allowBlank: true
-                ,anchor: '90%'
-            },{
-                fieldLabel: _('rampart.username')
-                ,description: _('rampart.username_desc')
-                ,name: 'username'
-                ,xtype: 'textfield'
-                ,allowBlank: true
-                ,anchor: '90%'
-            },{
-                fieldLabel: _('rampart.expireson')
-                ,description: _('rampart.expireson_desc')
-                ,name: 'expireson'
-                ,xtype: 'xdatetime'
-                ,allowBlank: true
-                ,anchor: '90%'
-            },{
-                fieldLabel: _('rampart.notes')
-                ,description: _('rampart.notes_desc')
-                ,name: 'notes'
-                ,xtype: 'textarea'
-                ,allowBlank: true
-                ,anchor: '90%'
+                layout: 'form'
+                ,labelAlign: 'top'
+                ,id: 'rampart-ban-form'
+                ,cls: 'main-wrapper'
+                ,labelWidth: 150
+                ,items: [{
+                    layout: 'column'
+                    ,border: false
+                    ,defaults: {
+                        layout: 'form'
+                        ,labelAlign: 'top'
+                        ,anchor: '100%'
+                        ,border: false
+                    }
+                    ,items: [{
+                        columnWidth: .5
+                        ,cls: 'main-content'
+                        ,items: [{
+                            name: 'id'
+                            ,xtype: 'hidden'
+                        },{
+                            fieldLabel: _('rampart.reason')
+                            ,description: MODx.expandHelp ? '' : _('rampart.reason_desc')
+                            ,name: 'reason'
+                            ,id: 'rpt-ban-reason'
+                            ,xtype: 'textarea'
+                            ,allowBlank: true
+                            ,anchor: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'rpt-ban-reason'
+                            ,html: _('rampart.reason_desc')
+                            ,cls: 'desc-under'
 
+                        },{
+                            fieldLabel: _('rampart.email')
+                            ,description: MODx.expandHelp ? '' : _('rampart.email_desc')
+                            ,name: 'email'
+                            ,id: 'rpt-ban-email'
+                            ,xtype: 'textfield'
+                            ,allowBlank: true
+                            ,anchor: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'rpt-ban-email'
+                            ,html: _('rampart.email_desc')
+                            ,cls: 'desc-under'
+
+                        },{
+                            fieldLabel: _('rampart.username')
+                            ,description: MODx.expandHelp ? '' : _('rampart.username_desc')
+                            ,name: 'username'
+                            ,id: 'rpt-ban-username'
+                            ,xtype: 'textfield'
+                            ,allowBlank: true
+                            ,anchor: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'rpt-ban-username'
+                            ,html: _('rampart.username_desc')
+                            ,cls: 'desc-under'
+                        }]
+                    },{
+                        columnWidth: .5
+                        ,cls: 'main-content'
+                        ,items: [{
+                            fieldLabel: _('rampart.ip_range')
+                            ,description: MODx.expandHelp ? '' : _('rampart.ip_range_desc')
+                            ,name: 'ip'
+                            ,id: 'rpt-ban-ip-range'
+                            ,xtype: 'textfield'
+                            ,allowBlank: true
+                            ,anchor: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'rpt-ban-ip-range'
+                            ,html: _('rampart.ip_range_desc')
+                            ,cls: 'desc-under'
+
+                        },{
+                            fieldLabel: _('rampart.hostname')
+                            ,description: MODx.expandHelp ? '' : _('rampart.hostname_desc')
+                            ,name: 'hostname'
+                            ,id: 'rpt-ban-hostname'
+                            ,xtype: 'textfield'
+                            ,allowBlank: true
+                            ,anchor: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'rpt-ban-hostname'
+                            ,html: _('rampart.hostname_desc')
+                            ,cls: 'desc-under'
+
+                        },{
+                            fieldLabel: _('rampart.expireson')
+                            ,description: _('rampart.expireson_desc')
+                            ,name: 'expireson'
+                            ,id: 'rpt-ban-expireson'
+                            ,xtype: 'xdatetime'
+                            ,allowBlank: true
+                            ,width: 250
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'rpt-ban-expireson'
+                            ,html: _('rampart.expireson_desc')
+                            ,cls: 'desc-under'
+                        }]
+                    }]
+                },{
+                    fieldLabel: _('rampart.notes')
+                    ,description: MODx.expandHelp ? '' : _('rampart.notes_desc')
+                    ,name: 'notes'
+                    ,id: 'rpt-ban-notes'
+                    ,xtype: 'textarea'
+                    ,allowBlank: true
+                    ,anchor: '90%'
+                },{
+                    xtype: MODx.expandHelp ? 'label' : 'hidden'
+                    ,forId: 'rpt-ban-notes'
+                    ,html: _('rampart.notes_desc')
+                    ,cls: 'desc-under'
+                }]
             }]
         },{
-
             title: _('rampart.ban_matches')
-            ,bodyStyle: 'padding: 15px;'
-            ,defaults: { border: false ,msgTarget: 'side' }
-            ,id: 'rampart-ban-matches-tab'
-            ,labelWidth: 150
+            ,xtype: 'panel'
+            ,defaults: { border: false }
             ,items: [{
                 html: '<p>'+_('rampart.ban_matches.intro_msg')+'</p>'
                 ,id: 'rampart-ban-matches-msg'
                 ,border: false
+                ,bodyCssClass: 'panel-desc'
             },{
-                xtype: 'rpt-grid-ban-matches'
-                ,preventRender: true
+                cls: 'main-wrapper'
+                ,id: 'rampart-ban-matches-tab'
+                ,labelWidth: 150
+                ,items: [{
+                    xtype: 'rpt-grid-ban-matches'
+                    ,preventRender: true
+                }]
             }]
         }])]
         ,listeners: {
@@ -126,7 +196,3 @@ Ext.extend(Rampart.panel.Ban,MODx.FormPanel,{
     }
 });
 Ext.reg('rampart-panel-ban',Rampart.panel.Ban);
-
-/*
-[{
-        }]*/

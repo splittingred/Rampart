@@ -202,6 +202,19 @@ Ext.extend(Rampart.grid.WhiteLists,MODx.grid.Grid,{
         });
     }
 
+    ,duplicateWhiteList: function(btn,e) {
+        MODx.Ajax.request({
+            url: this.config.url
+            ,params: {
+                action: 'mgr/whitelist/duplicate'
+                ,id: this.menu.record.id
+            }
+            ,listeners: {
+                'success': {fn:this.refresh,scope:this}
+            }
+        });
+    }
+
     ,activateSelected: function() {
         var cs = this.getSelectedAsList();
         if (cs === false) return false;
@@ -281,6 +294,10 @@ Ext.extend(Rampart.grid.WhiteLists,MODx.grid.Grid,{
                 text: _('rampart.whitelist_update')
                 ,handler: this.updateWhiteList
             });
+            m.push({
+                text: _('rampart.whitelist_duplicate')
+                ,handler: this.duplicateWhiteList
+            });
             m.push('-');
             if (!this.menu.record.active) {
                 m.push({
@@ -310,6 +327,7 @@ Ext.reg('rpt-grid-whitelist',Rampart.grid.WhiteLists);
 
 Rampart.window.CreateWhiteList = function(config) {
     config = config || {};
+    this.ident = config.ident || 'rpt-cwl-'+Ext.id();
     Ext.applyIf(config,{
         title: _('rampart.whitelist_add_new')
         ,height: 150
@@ -318,26 +336,47 @@ Rampart.window.CreateWhiteList = function(config) {
         ,action: 'mgr/whitelist/create'
         ,fields: [{
             fieldLabel: _('rampart.ip')
-            ,description: _('rampart.ip_desc')
+            ,description: MODx.expandHelp ? '' : _('rampart.whitelist_ip_desc')
             ,name: 'ip'
+            ,id: this.ident+'-ip'
             ,xtype: 'textfield'
             ,allowBlank: false
-            ,anchor: '90%'
+            ,anchor: '100%'
         },{
-            fieldLabel: _('rampart.active')
-            ,description: _('rampart.active_desc')
+            xtype: MODx.expandHelp ? 'label' : 'hidden'
+            ,forId: this.ident+'-ip'
+            ,html: _('rampart.whitelist_ip_desc')
+            ,cls: 'desc-under'
+
+        },{
+            boxLabel: _('rampart.active')
+            ,description: MODx.expandHelp ? '' : _('rampart.whitelist_active_desc')
             ,name: 'active'
+            ,id: this.ident+'-active'
             ,inputValue: 1
             ,xtype: 'checkbox'
             ,checked: true
-            ,anchor: '90%'
+            ,anchor: '100%'
+        },{
+            xtype: MODx.expandHelp ? 'label' : 'hidden'
+            ,forId: this.ident+'-active'
+            ,html: _('rampart.whitelist_active_desc')
+            ,cls: 'desc-under'
+
         },{
             fieldLabel: _('rampart.notes')
-            ,description: _('rampart.notes_desc')
+            ,description: MODx.expandHelp ? '' : _('rampart.whitelist_notes_desc')
             ,name: 'notes'
+            ,id: this.ident+'-notes'
             ,xtype: 'textarea'
             ,allowBlank: true
-            ,anchor: '90%'
+            ,anchor: '100%'
+        },{
+            xtype: MODx.expandHelp ? 'label' : 'hidden'
+            ,forId: this.ident+'-notes'
+            ,html: _('rampart.whitelist_notes_desc')
+            ,cls: 'desc-under'
+
         }]
     });
     Rampart.window.CreateWhiteList.superclass.constructor.call(this,config);
@@ -348,6 +387,7 @@ Ext.reg('rpt-window-whitelist-create',Rampart.window.CreateWhiteList);
 
 Rampart.window.UpdateWhiteList = function(config) {
     config = config || {};
+    this.ident = config.ident || 'rpt-uwl-'+Ext.id();
     Ext.applyIf(config,{
         title: _('rampart.whitelist_update')
         ,height: 150
@@ -359,26 +399,47 @@ Rampart.window.UpdateWhiteList = function(config) {
             ,xtype: 'hidden'
         },{
             fieldLabel: _('rampart.ip')
-            ,description: _('rampart.ip_desc')
+            ,description:  MODx.expandHelp ? '' : _('rampart.ip_desc')
             ,name: 'ip'
+            ,id: this.ident+'-ip'
             ,xtype: 'textfield'
             ,allowBlank: false
             ,anchor: '90%'
         },{
-            fieldLabel: _('rampart.active')
-            ,description: _('rampart.active_desc')
+            xtype: MODx.expandHelp ? 'label' : 'hidden'
+            ,forId: this.ident+'-ip'
+            ,html: _('rampart.whitelist_ip_desc')
+            ,cls: 'desc-under'
+
+        },{
+            boxLabel: _('rampart.active')
+            ,description: MODx.expandHelp ? '' : _('rampart.active_desc')
             ,name: 'active'
+            ,id: this.ident+'-active'
             ,inputValue: 1
             ,xtype: 'checkbox'
             ,checked: true
             ,anchor: '90%'
         },{
+            xtype: MODx.expandHelp ? 'label' : 'hidden'
+            ,forId: this.ident+'-active'
+            ,html: _('rampart.whitelist_active_desc')
+            ,cls: 'desc-under'
+
+        },{
             fieldLabel: _('rampart.notes')
-            ,description: _('rampart.notes_desc')
+            ,description:  MODx.expandHelp ? '' : _('rampart.notes_desc')
             ,name: 'notes'
+            ,id: this.ident+'-notes'
             ,xtype: 'textarea'
             ,allowBlank: true
             ,anchor: '90%'
+        },{
+            xtype: MODx.expandHelp ? 'label' : 'hidden'
+            ,forId: this.ident+'-notes'
+            ,html: _('rampart.whitelist_notes_desc')
+            ,cls: 'desc-under'
+
         }]
     });
     Rampart.window.UpdateWhiteList.superclass.constructor.call(this,config);

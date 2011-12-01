@@ -19,22 +19,23 @@
  *
  * @package rampart
  */
+require_once (dirname(__FILE__).'/update.class.php');
 /**
+ * Update a ban
+ *
  * @package rampart
  * @subpackage processors
  */
-if (empty($scriptProperties['id'])) {
-    return $modx->error->failure($modx->lexicon('rampart.whitelist_err_ns'));
+ class RampartBanUpdateFromGridProcessor extends RampartBanUpdateProcessor {
+    public function initialize() {
+        $data = $this->getProperty('data');
+        if (empty($data)) return $this->modx->lexicon('invalid_data');
+        $data = $this->modx->fromJSON($data);
+        if (empty($data)) return $this->modx->lexicon('invalid_data');
+        $this->setProperties($data);
+        $this->unsetProperty('data');
+
+        return parent::initialize();
+    }
 }
-$wl = $modx->getObject('rptWhiteList',$scriptProperties['id']);
-if (empty($wl)) { return $modx->error->failure($modx->lexicon('rampart.whitelist_err_nf')); }
-
-$wl->set('active',true);
-$wl->set('editedon',strftime('%Y-%m-%d %H:%M:%S'));
-$wl->set('editedby',$modx->user->get('id'));
-
-if ($wl->save() === false) {
-    return $modx->error->failure($modx->lexicon('rampart.whitelist_err_save'));
-}
-
-return $modx->error->success('',$wl);
+return 'RampartBanUpdateFromGridProcessor';

@@ -14,7 +14,7 @@ Rampart.page.UpdateBan = function(config) {
         },'-',{
             process: 'cancel'
             ,text: _('cancel')
-            ,params: {a:MODx.action['welcome']}
+            ,params: {a:MODx.action['rampart:controllers/index']}
         }]
         ,loadStay: false
         ,components: [{

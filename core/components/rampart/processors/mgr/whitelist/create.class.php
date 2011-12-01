@@ -23,13 +23,15 @@
  * @package rampart
  * @subpackage processors
  */
-$ban = $modx->newObject('rptBan');
-$ban->fromArray($scriptProperties);
-$ban->set('createdon',strftime('%Y-%m-%d %H:%M:%S'));
-$ban->set('createdby',$modx->user->get('id'));
+class RampartWhiteListCreateProcessor extends modObjectCreateProcessor {
+    public $classKey = 'rptWhiteList';
+    public $objectType = 'rampart.whitelist';
+    public $languageTopics = array('rampart:default');
 
-if ($ban->save() === false) {
-    return $modx->error->failure($modx->lexicon('rampart.ban_err_save'));
+    public function beforeSave() {
+        $this->object->set('createdon',strftime('%Y-%m-%d %H:%M:%S'));
+        $this->object->set('createdby',$this->modx->user->get('id'));
+        return parent::beforeSave();
+    }
 }
-
-return $modx->error->success('',$ban);
+return 'RampartWhiteListCreateProcessor';

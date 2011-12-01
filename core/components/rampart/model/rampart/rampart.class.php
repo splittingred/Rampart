@@ -73,6 +73,7 @@ class Rampart {
             'snippetsPath' => $corePath.'elements/snippets/',
             'processorsPath' => $corePath.'processors/',
             'controllersPath' => $corePath.'controllers/',
+            'templatesPath' => $corePath.'templates/',
 
             'salt' => $this->modx->getOption('rampart.salt',$config,'sieg3thec4stle'),
         ),$config);

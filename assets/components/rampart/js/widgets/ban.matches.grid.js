@@ -95,8 +95,6 @@ Ext.extend(Rampart.grid.BanMatches,MODx.grid.Grid,{
         return String.format(
             '<span class="'+css+'">'+v+'</span>'
         );
-
-        return value;
     }
     ,clearFilter: function() {
     	var s = this.getStore();
@@ -106,20 +104,13 @@ Ext.extend(Rampart.grid.BanMatches,MODx.grid.Grid,{
         this.refresh();
     }
     ,search: function(tf,newValue,oldValue) {
-        var nv = newValue || tf;
-        this.getStore().baseParams.search = nv;
+        this.getStore().baseParams.search = newValue || tf;
         this.getBottomToolbar().changePage(1);
         this.refresh();
         return true;
     }
     ,getMenu: function() {
         var m = [];
-        var r = this.getSelectionModel().getSelected();
-        /*
-        m.push({
-            text: _('rampart.match_view')
-            ,handler: this.viewMatch
-        });*/
         if (m.length > 0) {
             this.addContextMenuItem(m);
         }

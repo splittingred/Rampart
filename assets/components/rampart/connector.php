@@ -22,6 +22,8 @@
 /**
  * Rampart Connector
  *
+ * @var modX $modx
+ * @var Rampart $rampart
  * @package rampart
  */
 require_once dirname(dirname(dirname(dirname(__FILE__)))).'/config.core.php';
@@ -35,7 +37,7 @@ $modx->rampart = new Rampart($modx);
 $modx->lexicon->load('rampart:default');
 
 /* handle request */
-$path = $modx->getOption('processorsPath',$modx->quip->config,$rampartCorePath.'processors/');
+$path = $modx->getOption('processorsPath',$modx->rampart->config,$rampartCorePath.'processors/');
 $modx->request->handleRequest(array(
     'processors_path' => $path,
     'location' => '',

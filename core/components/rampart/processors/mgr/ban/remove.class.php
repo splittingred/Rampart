@@ -20,28 +20,12 @@
  * @package rampart
  */
 /**
- * Update a whitelist
- *
  * @package rampart
  * @subpackage processors
  */
-
-if (empty($scriptProperties['data'])) return $modx->error->failure($modx->lexicon('rampart.whitelist_err_ns'));
-$_DATA = $modx->fromJSON($scriptProperties['data']);
-if (empty($_DATA)) return $modx->error->failure($modx->lexicon('rampart.whitelist_err_ns'));
-
-if (empty($_DATA['id'])) {
-    return $modx->error->failure($modx->lexicon('rampart.whitelist_err_ns'));
+class RampartBanRemoveProcessor extends modObjectRemoveProcessor {
+    public $classKey = 'rptBan';
+    public $objectType = 'rampart.ban';
+    public $languageTopics = array('rampart:default');
 }
-$wl = $modx->getObject('rptWhiteList',$_DATA['id']);
-if (empty($wl)) { return $modx->error->failure($modx->lexicon('rampart.whitelist_err_nf',array('id' => $_DATA['id']))); }
-
-$wl->fromArray($_DATA);
-$wl->set('editedon',strftime('%Y-%m-%d %H:%M:%S'));
-$wl->set('editedby',$modx->user->get('id'));
-
-if ($wl->save() === false) {
-    return $modx->error->failure($modx->lexicon('rampart.whitelist_err_save'));
-}
-
-return $modx->error->success('',$wl);
+return 'RampartBanRemoveProcessor';

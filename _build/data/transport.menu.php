@@ -22,9 +22,11 @@
 /**
  * Adds modActions and modMenus into package
  *
+ * @var modX $modx
  * @package rampart
  * @subpackage build
  */
+/** @var modAction $action */
 $action= $modx->newObject('modAction');
 $action->fromArray(array(
     'id' => 1,
@@ -37,6 +39,7 @@ $action->fromArray(array(
 ),'',true,true);
 
 /* load menu into action */
+/** @var modMenu $menu */
 $menu= $modx->newObject('modMenu');
 $menu->fromArray(array(
     'text' => 'rampart',

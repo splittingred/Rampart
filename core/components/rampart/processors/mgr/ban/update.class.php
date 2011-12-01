@@ -23,18 +23,15 @@
  * @package rampart
  * @subpackage processors
  */
-if (empty($scriptProperties['id'])) {
-    return $modx->error->failure($modx->lexicon('rampart.whitelist_err_ns'));
+class RampartBanUpdateProcessor extends modObjectUpdateProcessor {
+    public $classKey = 'rptBan';
+    public $objectType = 'rampart.ban';
+    public $languageTopics = array('rampart:default');
+
+    public function beforeSave() {
+        $this->object->set('editedon',strftime('%Y-%m-%d %H:%M:%S'));
+        $this->object->set('editedby',$this->modx->user->get('id'));
+        return parent::beforeSave();
+    }
 }
-$wl = $modx->getObject('rptWhiteList',$scriptProperties['id']);
-if (empty($wl)) { return $modx->error->failure($modx->lexicon('rampart.whitelist_err_nf')); }
-
-$wl->fromArray($scriptProperties);
-$wl->set('editedon',strftime('%Y-%m-%d %H:%M:%S'));
-$wl->set('editedby',$modx->user->get('id'));
-
-if ($wl->save() === false) {
-    return $modx->error->failure($modx->lexicon('rampart.whitelist_err_save'));
-}
-
-return $modx->error->success('',$wl);
+return 'RampartBanUpdateProcessor';
