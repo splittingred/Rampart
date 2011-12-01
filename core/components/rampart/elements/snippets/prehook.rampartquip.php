@@ -21,7 +21,12 @@
  */
 /**
  * preHook for Quip snippet that utilizes Rampart, simple ban-checking only
- * 
+ *
+ * @var modX $modx
+ * @var Rampart $rampart
+ * @var array $scriptProperties
+ * @var quipHooks $hook
+ * @var array $fields
  * @package rampart
  */
 $modelPath = $modx->getOption('rampart.core_path',null,$modx->getOption('core_path').'components/rampart/').'model/';

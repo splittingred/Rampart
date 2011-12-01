@@ -8,6 +8,7 @@ $xpdo_meta_map['rptBanMatch']= array (
   'fields' => 
   array (
     'ban' => 0,
+    'reason' => '',
     'username' => '',
     'username_match' => '',
     'hostname' => NULL,
@@ -22,7 +23,6 @@ $xpdo_meta_map['rptBanMatch']= array (
     'notes' => NULL,
     'data' => NULL,
     'service' => 'manual',
-    'reason' => '',
   ),
   'fieldMeta' => 
   array (
@@ -34,6 +34,14 @@ $xpdo_meta_map['rptBanMatch']= array (
       'null' => false,
       'default' => 0,
       'index' => 'index',
+    ),
+    'reason' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
     ),
     'username' => 
     array (
@@ -129,14 +137,6 @@ $xpdo_meta_map['rptBanMatch']= array (
       'phptype' => 'string',
       'null' => false,
       'default' => 'manual',
-    ),
-    'reason' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '255',
-      'phptype' => 'string',
-      'null' => false,
-      'default' => '',
     ),
   ),
   'indexes' => 

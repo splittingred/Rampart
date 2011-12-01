@@ -1,5 +1,9 @@
 Changelog for Rampart.
 
+Rampart 1.2.1
+==============
+- [#5958] Fix debug call issue
+
 Rampart 1.2.0
 ==============
 - Refactor architecture to allow for better ban matching storage, easier integration with other services, more scalability

@@ -1,7 +1,12 @@
 <?php
 /**
  * Hook for FormIt forms
- * 
+ *
+ * @var modX $modx
+ * @var Rampart $rampart
+ * @var array $scriptProperties
+ * @var fiHooks $hook
+ * @var array $fields
  * @package rampart
  */
 $modelPath = $modx->getOption('rampart.core_path',null,$modx->getOption('core_path').'components/rampart/').'model/';

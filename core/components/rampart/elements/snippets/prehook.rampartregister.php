@@ -21,7 +21,13 @@
  */
 /**
  * preHook for Register snippet that utilizes Rampart
- * 
+ *
+ * @var modX $modx
+ * @var Rampart $rampart
+ * @var array $scriptProperties
+ * @var LoginHooks $hook
+ * @var array $fields
+ * @var string $usernameField
  * @package rampart
  */
 $modelPath = $modx->getOption('rampart.core_path',null,$modx->getOption('core_path').'components/rampart/').'model/';
@@ -52,6 +58,7 @@ if ($response[Rampart::STATUS] == Rampart::STATUS_MODERATED) {
     $password = $rampart->encrypt($fields['password']);
 
     /* create a flagged user record */
+    /** @var rptFlaggedUser $flu */
     $flu = $modx->newObject('rptFlaggedUser');
     $flu->set('username',$response[Rampart::USERNAME]);
     $flu->set('password',$password);

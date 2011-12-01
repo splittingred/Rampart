@@ -19,6 +19,10 @@ $xpdo_meta_map['rptBanMatch']= array (
     'useragent' => NULL,
     'createdon' => NULL,
     'resource' => 0,
+    'notes' => NULL,
+    'data' => NULL,
+    'service' => 'manual',
+    'reason' => '',
   ),
   'fieldMeta' => 
   array (
@@ -90,7 +94,8 @@ $xpdo_meta_map['rptBanMatch']= array (
     ),
     'useragent' => 
     array (
-      'dbtype' => 'tinytext',
+      'dbtype' => 'nvarchar',
+      'precision' => 'max',
       'phptype' => 'string',
       'null' => true,
     ),
@@ -107,6 +112,35 @@ $xpdo_meta_map['rptBanMatch']= array (
       'null' => false,
       'default' => 0,
       'index' => 'index',
+    ),
+    'notes' => 
+    array (
+      'dbtype' => 'nvarchar',
+      'precision' => 'max',
+      'phptype' => 'string',
+      'null' => true,
+    ),
+    'data' => 
+    array (
+      'dbtype' => 'nvarchar',
+      'precision' => 'max',
+      'phptype' => 'json',
+    ),
+    'service' => 
+    array (
+      'dbtype' => 'nvarchar',
+      'precision' => '100',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => 'manual',
+    ),
+    'reason' => 
+    array (
+      'dbtype' => 'nvarchar',
+      'precision' => '255',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
     ),
   ),
   'indexes' => 
