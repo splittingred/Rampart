@@ -103,7 +103,7 @@ $settings['rampart.denyaccess']->fromArray(array(
 $settings['rampart.denyaccess.threshold']= $modx->newObject('modSystemSetting');
 $settings['rampart.denyaccess.threshold']->fromArray(array(
     'key' => 'rampart.denyaccess.threshold',
-    'value' => false,
+    'value' => 5,
     'xtype' => 'textfield',
     'namespace' => 'rampart',
     'area' => 'Deny Access',
