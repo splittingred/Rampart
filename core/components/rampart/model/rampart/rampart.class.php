@@ -459,7 +459,7 @@ class Rampart {
             if (!empty($fields['hostname'])) { $match->set('hostname_match',$fields['hostname']); }
             if (!empty($fields['email'])) { $match->set('email_match',$fields['email']); }
 
-            $match->set('resource',$this->modx->resource->get('id'));
+            $match->set('resource',($this->modx->resource) ? $this->modx->resource->get('id') : 0);
             $match->set('data',$result);
             $match->set('service',!empty($result[Rampart::SERVICE]) ? $result[Rampart::SERVICE] : 'manual');
             $match->set('notes',!empty($result[Rampart::NOTES]) ? $result[Rampart::NOTES] : '');
