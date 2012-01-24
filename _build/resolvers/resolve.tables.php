@@ -25,6 +25,10 @@
  * @package rampart
  * @subpackage build
  */
+/* @var $object
+ * @var modX $modx
+ * @var array $options 
+ */ 
 if ($object->xpdo) {
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
@@ -37,6 +41,7 @@ if ($object->xpdo) {
             $m->createObjectContainer('rptBan');
             $m->createObjectContainer('rptFlaggedUser');
             $m->createObjectContainer('rptBanMatch');
+            $m->createObjectContainer('rptBanMatchField');
             $m->createObjectContainer('rptBanMatchBan');
             $m->createObjectContainer('rptWhiteList');
             break;
