@@ -1,5 +1,10 @@
 Changelog for Rampart.
 
+Rampart 1.3.1
+==============
+- Add fix to allow non-resource-specific bans, such as 404 bans
+- Add fix to ensure rptBanMatchField table gets created
+
 Rampart 1.3.0
 ==============
 - Improved to MODX 2.2 styling and functionality
