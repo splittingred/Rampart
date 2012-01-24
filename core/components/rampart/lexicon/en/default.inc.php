@@ -128,3 +128,9 @@ $_lang['setting_rampart.honeypot.blhost'] = 'ProjectHoneyPot Blacklist Host';
 $_lang['setting_rampart.honeypot.blhost_desc'] = 'The hostname for the Project Honey Pot Blacklist service.';
 $_lang['setting_rampart.honeypot.fullwall_enabled'] = 'Enable ProjectHoneyPot Full Wall Blacklist';
 $_lang['setting_rampart.honeypot.fullwall_enabled_desc'] = 'If true, will enable Blacklist banning for your site that will completely prevent site viewing, via Project Honey Pot.';
+
+$_lang['setting_rampart.denyaccess'] = 'Deny Access when Banned';
+$_lang['setting_rampart.denyaccess_desc'] = 'If true, this will deny access to anyone requestion any page on your site that appears on the ban list. ';
+
+$_lang['setting_rampart.denyaccess.threshold'] = 'Deny Access Threshold';
+$_lang['setting_rampart.denyaccess.threshold_desc'] = 'When Deny Access when Banned is enabled, access is denied when ban has seen more than the threshold amount of matches.';

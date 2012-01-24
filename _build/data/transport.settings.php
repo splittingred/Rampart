@@ -92,5 +92,21 @@ $settings['rampart.honeypot.fullwall_enabled']->fromArray(array(
     'namespace' => 'rampart',
     'area' => 'HoneyPot',
 ),'',true,true);
+$settings['rampart.denyaccess']= $modx->newObject('modSystemSetting');
+$settings['rampart.denyaccess']->fromArray(array(
+    'key' => 'rampart.denyaccess',
+    'value' => false,
+    'xtype' => 'combo-boolean',
+    'namespace' => 'rampart',
+    'area' => 'Deny Access',
+),'',true,true);
+$settings['rampart.denyaccess.threshold']= $modx->newObject('modSystemSetting');
+$settings['rampart.denyaccess.threshold']->fromArray(array(
+    'key' => 'rampart.denyaccess.threshold',
+    'value' => 5,
+    'xtype' => 'textfield',
+    'namespace' => 'rampart',
+    'area' => 'Deny Access',
+),'',true,true);
 
 return $settings;
