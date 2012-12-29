@@ -21,10 +21,10 @@
  */
 /**
  * Handles all plugin events for Rampart
- * 
+ *
  * @package rampart
  */
-/* @var modX $modx 
+/* @var modX $modx
  * @var Rampart $rampart
  */
 $modelPath = $modx->getOption('rampart.core_path',null,$modx->getOption('core_path').'components/rampart/').'model/';
@@ -48,7 +48,7 @@ switch ($modx->event->name) {
                 $modx->log(modX::LOG_LEVEL_ERROR,'[Rampart] Could not load RampartHoneyPot class from: '.$rampart->config['modelPath']);
             }
         }
-        
+
         if ($modx->getOption('rampart.denyaccess', null, false)) {
             $ip = $_SERVER['REMOTE_ADDR'];
             $result = array(
@@ -66,7 +66,7 @@ switch ($modx->event->name) {
             if ($result[Rampart::STATUS] == Rampart::STATUS_BANNED) {
                 $threshold = $modx->getOption('rampart.denyaccess.threshold', null, 5);
                 $banCount = $modx->getCount('rptBanMatch', array('ban' => $result[Rampart::BAN]));
-                if (($threshold > 1) && ($banCount >= $threshold)) {
+                if ((($threshold > 1) && ($banCount >= $threshold)) || 'Manual Ban Match' == $result[Rampart::REASON]) {
                     @session_write_close();
                     header('HTTP/1.1 403 Forbidden');
                     $message = '<p>Sorry, you have been banned. If you feel this is in error, please contact the administrator of this site.</p>';
@@ -75,7 +75,7 @@ switch ($modx->event->name) {
                 }
             }
         }
-        
+
         break;
 }
 return;
