@@ -128,3 +128,9 @@ $_lang['setting_rampart.honeypot.blhost'] = 'Nom d\'hôte pour ProjectHoneyPot';
 $_lang['setting_rampart.honeypot.blhost_desc'] = 'Le nom d\'hôte du service de blacklistage Project Honey Pot.';
 $_lang['setting_rampart.honeypot.fullwall_enabled'] = 'Enable ProjectHoneyPot Full Wall Blacklist';
 $_lang['setting_rampart.honeypot.fullwall_enabled_desc'] = 'Lorsqu\'activée, cette option empêche la visualisation de votre site aux utilisateurs bannis via le projet Honey Pot.';
+
+$_lang['setting_rampart.denyaccess'] = 'Accès refusé aux bannis';
+$_lang['setting_rampart.denyaccess_desc'] = 'Activez cette option pour interdire l\'accès à votre site aux personnes marquées comme bannies. ';
+
+$_lang['setting_rampart.denyaccess.threshold'] = 'Seuil de tolérance pour l\'accès refusé';
+$_lang['setting_rampart.denyaccess.threshold_desc'] = 'Lorsque l\'option « accès refusé » est activée, l\'accès est uniquement refusé lorsque le nombre de correspondances est supérieur ou égale à cette option.';
